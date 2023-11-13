@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name="tour")
+@Table(name="tour_table")
 public class Tour {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

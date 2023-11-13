@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @IdClass(GroupUserId.class)
-@Table(name="group_user")
+@Table(name="group_user_table")
 public class Group_User {
     @Id
     @ManyToOne
