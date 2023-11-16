@@ -6,6 +6,14 @@ build/
 !**/src/test/**/build/
 application.yml
 application-dev.yml
+application-prod.yml
+app.yml
+app-dev.yml
+app-prod.yml
+oauth.yml
+oauth-dev.yml
+oauth-prod.yml
+
 
 ### STS ###
 .apt_generated
