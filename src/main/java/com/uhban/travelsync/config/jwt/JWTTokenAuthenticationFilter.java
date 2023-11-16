@@ -47,8 +47,9 @@ public class JWTTokenAuthenticationFilter extends OncePerRequestFilter {
                     String userId = tokenProvider.getUserIdByToken(token);
                     //username but use userid
                     PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(userId);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principalDetails, null);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.info("[JwtFilter] Access Token Authentication Success");
                 }
             }
         } catch (ExpiredJwtException exception) {

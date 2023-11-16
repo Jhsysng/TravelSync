@@ -34,8 +34,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(accessTokenExpiration).toInstant()))
-                .setSubject(principalDetails.getUsername())
-                .claim("userId", principalDetails.getUser().getUserId())
+                .setSubject(principalDetails.getUserId())
                 .claim("type", TokenType.ACCESS)
                 .compact();
     }
@@ -47,8 +46,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
                 .setExpiration(Date.from(ZonedDateTime.now().plusDays(refreshTokenExpiration).toInstant()))
-                .setSubject(principalDetails.getUsername())
-                .claim("userId", principalDetails.getUser().getUserId())
+                .setSubject(principalDetails.getUserId())
                 .claim("type", TokenType.REFRESH)
                 .compact();
     }
