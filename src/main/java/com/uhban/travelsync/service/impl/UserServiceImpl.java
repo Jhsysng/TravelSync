@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         String accessToken = tokenProvider.generateAccessToken(principalDetails);
         String refreshToken = tokenProvider.generateRefreshToken(principalDetails);
         /*
-        // Redis에 저장 - 만료 시간 설정을 통해 자동 삭제 처리
+        // Redis에 저장 - 만료 시간 설정을 통해 자동 삭제
         redisTemplate.opsForValue().set(
                 principalDetails.getUsername(),
                 refreshToken,
@@ -47,5 +47,10 @@ public class UserServiceImpl implements UserService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    @Transactional
+    public boolean userExists(String userId) {
+        return userRepository.existsByUserId(userId);
     }
 }

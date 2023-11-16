@@ -18,9 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -36,11 +34,20 @@ public class UserController {
         this.authenticationManager = authenticationManager;
     }
 
+    @GetMapping("/user/check/{userId}")
+    public ResponseEntity<String> checkUser(@PathVariable String userId) {
+        log.info("[checkUser] userId : {}", userId);
+        if (userService.userExists(userId)) {
+            return new ResponseEntity<String>("already exists", HttpStatus.OK);
+        }else{
+            return new ResponseEntity<String>("not exists", HttpStatus.OK);
+        }
+    }
+
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@RequestBody UserSignUpDTO userSignUpDTO) {
         log.info("userSignUpDTO : {}", userSignUpDTO);
         userSignUpDTO.setPassword(bCryptPasswordEncoder.encode(userSignUpDTO.getPassword()));
-        log.info("password : {}", userSignUpDTO.getPassword());
         User user = User.builder()
                 .userId(userSignUpDTO.getUserId())
                 .name(userSignUpDTO.getUserName())

@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests->
                         requests
-                            .requestMatchers("/user/login", "/user/signup").permitAll() // 로그인 및 회원가입 혹은 공개 API에 대한 접근 허용
+                            .requestMatchers("/user/login", "/user/signup","/user/check/**").permitAll() // 로그인 및 회원가입 혹은 공개 API에 대한 접근 허용
                             .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

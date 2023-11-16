@@ -8,5 +8,6 @@ public interface UserService {
 
     void saveUser(User user);
     TokenResponseDto generateTokens (PrincipalDetails principalDetails);
+    boolean userExists(String userId);
 
 }
