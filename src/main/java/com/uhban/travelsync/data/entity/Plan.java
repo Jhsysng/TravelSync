@@ -1,7 +1,9 @@
 package com.uhban.travelsync.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -16,8 +18,12 @@ public class Plan {
     @JoinColumn(name = "tourId", referencedColumnName = "tourId")
     private Tour tour;
 
-    private Date time;
-    private Date day;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm", timezone="Asia/Seoul")
+    private Date date;
+
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm", timezone="Asia/Seoul")
+    private LocalTime time;
+
     private String content;
     private String planTitle;
 }

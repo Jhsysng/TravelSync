@@ -1,5 +1,6 @@
 package com.uhban.travelsync.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +22,9 @@ public class Notice {
     @JoinColumn(name = "groupId", referencedColumnName = "groupId")
     private Group group;
 
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm", timezone="Asia/Seoul")
     private Date date;
+
     private Double latitude;
     private Double longitude;
     private String content;
