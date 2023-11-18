@@ -23,9 +23,7 @@ public class Plan {
     @JoinColumn(name = "tourId", referencedColumnName = "tourId")
     private Tour tour;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm", timezone="Asia/Seoul")
-    private Date date;
-
+    private Integer day;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm", timezone="Asia/Seoul")
     private LocalTime time;
 
@@ -33,10 +31,10 @@ public class Plan {
     private String planTitle;
 
     @Builder
-    public Plan(Long planId, Tour tour, Date date, LocalTime time, String content, String planTitle) {
+    public Plan(Long planId, Tour tour, Integer day, LocalTime time, String content, String planTitle) {
         this.planId = planId;
         this.tour = tour;
-        this.date = date;
+        this.day = day;
         this.time = time;
         this.content = content;
         this.planTitle = planTitle;

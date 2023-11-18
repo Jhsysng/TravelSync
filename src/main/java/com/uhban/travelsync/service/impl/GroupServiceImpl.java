@@ -147,6 +147,7 @@ public class GroupServiceImpl implements GroupService {
             log.error("[GroupServiceImpl] joinGroup 비밀번호가 일치하지 않습니다.");
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+        log.info("[GroupServiceImpl] joinGroup guideName : {}", group.getGuide().getName());
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> {
                     log.error("해당 사용자 : {}를 찾을 수 없습니다. : ", userId);
