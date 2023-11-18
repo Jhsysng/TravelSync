@@ -2,12 +2,16 @@ package com.uhban.travelsync.service.impl;
 
 import com.uhban.travelsync.data.dto.group.GroupCreateDto;
 import com.uhban.travelsync.data.dto.group.GroupInfoDto;
+import com.uhban.travelsync.data.dto.group.GroupMemberDto;
 import com.uhban.travelsync.data.dto.group.GroupResponseDto;
 import com.uhban.travelsync.data.entity.Group;
+import com.uhban.travelsync.data.entity.Group_User;
+import com.uhban.travelsync.data.entity.User;
 import com.uhban.travelsync.data.repository.GroupRepository;
 import com.uhban.travelsync.data.repository.GroupUserRepository;
 import com.uhban.travelsync.data.repository.UserRepository;
 import com.uhban.travelsync.service.GroupService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,14 +75,34 @@ public class GroupServiceImpl implements GroupService {
                 .toggleLoc(group.getToggleLoc())
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public List<GroupMemberDto> getGroupMembers(Long groupId) {
+        return groupRepository.findById(groupId)
+                .map(group -> group.getGroupUsers()
+                        .stream()
+                        .map(groupUser -> GroupMemberDto.builder()
+                                .groupId(groupId)
+                                .userId(groupUser.getUser().getUserId())
+                                .userName(groupUser.getUser().getName())
+                                .build())
+                        .collect(Collectors.toList()))
+                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+    }
+
+
     @Transactional
     public GroupResponseDto saveGroup(GroupCreateDto groupCreateDto) {
+        log.info("[GroupServiceImpl] saveGroup groupName : {}", groupCreateDto.getGroupName());
+        // 사용자 찾기 및 그룹 생성
+        User guide = userRepository.findByUserId(groupCreateDto.getGuide())
+                .orElseThrow(() -> {
+                    log.error("해당 사용자 : {}를 찾을 수 없습니다. : ", groupCreateDto.getGuide());
+                    throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다. : " + groupCreateDto.getGuide());
+                });
+
         Group group = Group.builder()
-                .guide(userRepository.findByUserId(groupCreateDto.getGuide())
-                        .orElseThrow(() -> {
-                            log.error("해당 사용자 : {}를 찾을 수 없습니다. : ", groupCreateDto.getGuide());
-                            throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다. : " + groupCreateDto.getGuide());
-                        }))
+                .guide(guide)
                 .groupName(groupCreateDto.getGroupName())
                 .startDate(groupCreateDto.getStartDate())
                 .endDate(groupCreateDto.getEndDate())
@@ -88,6 +112,15 @@ public class GroupServiceImpl implements GroupService {
 
         groupRepository.save(group);
 
+        // Group_User에 가이드 추가
+        Group_User groupUser = Group_User.builder()
+                .user(guide)
+                .group(group)
+                .build();
+
+        groupUserRepository.save(groupUser); // groupUserRepository는 Group_User 엔티티를 처리하는 JPA 리포지토리
+
+        log.info("[GroupServiceImpl] saveGroup Success : {}", group.getGroupId());
         return GroupResponseDto.builder()
                 .groupId(group.getGroupId())
                 .guide(group.getGuide().getUserId())
@@ -99,4 +132,5 @@ public class GroupServiceImpl implements GroupService {
                 .toggleLoc(group.getToggleLoc())
                 .build();
     }
+
 }
