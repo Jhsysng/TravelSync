@@ -21,11 +21,11 @@ public class GroupResponseDto {
     private String nation;
     private String tourCompany;
     private Boolean toggleLoc;
-    private String tourId;
+    private Long tourId;
 
     @Builder
     public GroupResponseDto(Long groupId, String guide, String groupName, Date startDate, Date endDate, String nation,
-                            String tourCompany, Boolean toggleLoc, String tourId) {
+                            String tourCompany, Boolean toggleLoc, Long tourId) {
         this.groupId = groupId;
         this.guide = guide;
         this.groupName = groupName;

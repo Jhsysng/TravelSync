@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class TourServiceImpl implements TourService {
@@ -23,7 +25,7 @@ public class TourServiceImpl implements TourService {
     }
 
     @Transactional(readOnly = true)
-    public TourResponseDto getTour(String userId) {
+    public List<TourResponseDto> getTour(String userId) {
         return null;
     }
 

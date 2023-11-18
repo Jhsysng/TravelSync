@@ -3,9 +3,11 @@ package com.uhban.travelsync.service.impl;
 import com.uhban.travelsync.data.dto.group.*;
 import com.uhban.travelsync.data.entity.Group;
 import com.uhban.travelsync.data.entity.Group_User;
+import com.uhban.travelsync.data.entity.Tour;
 import com.uhban.travelsync.data.entity.User;
 import com.uhban.travelsync.data.repository.GroupRepository;
 import com.uhban.travelsync.data.repository.GroupUserRepository;
+import com.uhban.travelsync.data.repository.TourRepository;
 import com.uhban.travelsync.data.repository.UserRepository;
 import com.uhban.travelsync.service.GroupService;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,12 +29,14 @@ public class GroupServiceImpl implements GroupService {
     private final UserRepository userRepository;
     private final GroupUserRepository groupUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final TourRepository tourRepository;
 
-    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, GroupUserRepository groupUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, GroupUserRepository groupUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder, TourRepository tourRepository) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
         this.groupUserRepository = groupUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.tourRepository = tourRepository;
     }
     @Transactional
     public List<GroupInfoDto> getGroupByUserId(String userId) {
@@ -63,6 +67,9 @@ public class GroupServiceImpl implements GroupService {
                     log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupId);
                     throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupId);
                 });
+        Long tourId = Optional.ofNullable(group.getTour())
+                .map(Tour::getTourId)
+                .orElse(null);
 
         return GroupResponseDto.builder()
                 .groupId(group.getGroupId())
@@ -73,6 +80,7 @@ public class GroupServiceImpl implements GroupService {
                 .nation(group.getNation())
                 .tourCompany(group.getTourCompany())
                 .toggleLoc(group.getToggleLoc())
+                .tourId(tourId)
                 .build();
     }
 
@@ -142,31 +150,39 @@ public class GroupServiceImpl implements GroupService {
                     log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupDto.getGroupId());
                     throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupDto.getGroupId());
                 });
-        Group changedGroup = Group.builder()
-                .groupId(group.getGroupId())
-                .guide(group.getGuide())
-                .groupName(groupDto.getGroupName())
-                .startDate(groupDto.getStartDate())
-                .endDate(groupDto.getEndDate())
-                .nation(groupDto.getNation())
-                .tourCompany(groupDto.getTourCompany())
-                .toggleLoc(groupDto.getToggleLoc())
-                .build();
 
-        groupRepository.save(changedGroup);
-        log.info("[GroupServiceImpl] changeGroup Success : {}", groupDto.getGroupId());
+        // Update fields of the existing group
+        group.setGroupName(groupDto.getGroupName());
+        group.setStartDate(groupDto.getStartDate());
+        group.setEndDate(groupDto.getEndDate());
+        group.setNation(groupDto.getNation());
+        group.setTourCompany(groupDto.getTourCompany());
+        group.setToggleLoc(groupDto.getToggleLoc());
+
+        // If tourId is present in the DTO, update the tour as well
+        if (groupDto.getTourId() != null) {
+            Tour tour = tourRepository.findById(groupDto.getTourId())
+                    .orElseThrow(() -> {
+                        log.error("해당 여행 : {}를 찾을 수 없습니다. : ", groupDto.getTourId());
+                        throw new IllegalArgumentException("해당 여행을 찾을 수 없습니다. : " + groupDto.getTourId());
+                    });
+            group.setTour(tour);
+        }
+        groupRepository.save(group);
 
         return GroupResponseDto.builder()
-                .groupId(changedGroup.getGroupId())
-                .guide(changedGroup.getGuide().getUserId())
-                .groupName(changedGroup.getGroupName())
-                .startDate(changedGroup.getStartDate())
-                .endDate(changedGroup.getEndDate())
-                .nation(changedGroup.getNation())
-                .tourCompany(changedGroup.getTourCompany())
-                .toggleLoc(changedGroup.getToggleLoc())
+                .groupId(group.getGroupId())
+                .guide(group.getGuide().getUserId()) // Assuming getGuide() returns a User entity
+                .groupName(group.getGroupName())
+                .startDate(group.getStartDate())
+                .endDate(group.getEndDate())
+                .nation(group.getNation())
+                .tourCompany(group.getTourCompany())
+                .toggleLoc(group.getToggleLoc())
+                .tourId(group.getTour().getTourId())
                 .build();
     }
+
 
     @Transactional
     public GroupInfoDto joinGroup(String userId, GroupJoinDto groupJoinDto){
