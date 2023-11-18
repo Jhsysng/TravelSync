@@ -91,7 +91,6 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
     }
 
-
     @Transactional
     public GroupResponseDto saveGroup(GroupCreateDto groupCreateDto) {
         log.info("[GroupServiceImpl] saveGroup groupName : {}", groupCreateDto.getGroupName());
@@ -132,6 +131,40 @@ public class GroupServiceImpl implements GroupService {
                 .nation(group.getNation())
                 .tourCompany(group.getTourCompany())
                 .toggleLoc(group.getToggleLoc())
+                .build();
+    }
+
+    @Transactional
+    public GroupResponseDto changeGroup(GroupDto groupDto){
+        log.info("[GroupServiceImpl] changeGroup groupId : {}", groupDto.getGroupId());
+        Group group = groupRepository.findByGroupId(groupDto.getGroupId())
+                .orElseThrow(() -> {
+                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupDto.getGroupId());
+                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupDto.getGroupId());
+                });
+        Group changedGroup = Group.builder()
+                .groupId(group.getGroupId())
+                .guide(group.getGuide())
+                .groupName(groupDto.getGroupName())
+                .startDate(groupDto.getStartDate())
+                .endDate(groupDto.getEndDate())
+                .nation(groupDto.getNation())
+                .tourCompany(groupDto.getTourCompany())
+                .toggleLoc(groupDto.getToggleLoc())
+                .build();
+
+        groupRepository.save(changedGroup);
+        log.info("[GroupServiceImpl] changeGroup Success : {}", groupDto.getGroupId());
+
+        return GroupResponseDto.builder()
+                .groupId(changedGroup.getGroupId())
+                .guide(changedGroup.getGuide().getUserId())
+                .groupName(changedGroup.getGroupName())
+                .startDate(changedGroup.getStartDate())
+                .endDate(changedGroup.getEndDate())
+                .nation(changedGroup.getNation())
+                .tourCompany(changedGroup.getTourCompany())
+                .toggleLoc(changedGroup.getToggleLoc())
                 .build();
     }
 

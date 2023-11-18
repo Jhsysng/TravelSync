@@ -56,7 +56,7 @@ public class GroupController {
     }
 
     @PostMapping("/group/create")
-    public ResponseEntity<GroupResponseDto> saveGroup(@RequestBody GroupCreateDto groupCreateDto) {
+    public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto groupCreateDto) {
         log.info("[GroupController] saveGroup groupName : {}", groupCreateDto.getGroupName());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = "";
@@ -103,6 +103,29 @@ public class GroupController {
             return ResponseEntity.ok(groupInfoDto);
         } catch (IllegalArgumentException e) {
             log.error("[GroupController] 그룹 혹은 유저, 비밀번호가 틀립니다.");
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/group/setting")
+    public ResponseEntity<GroupResponseDto> setGroupTour(@RequestBody GroupDto groupDto){
+        log.info("[GroupController] setGroupTour groupId : {}", groupDto.getGroupId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String userId = principalDetails.getUserId();
+
+        if(userId.equals(groupDto.getGuide())){
+            log.info("[GroupController] setGroupTour 그룹 여행지를 변경합니다.");
+        }else{
+            log.error("[GroupController] setGroupTour 본인이 아닌 유저가 그룹 여행지를 변경합니다.");
+            return ResponseEntity.badRequest().build();
+        }
+        try{
+            GroupResponseDto groupResponseDto = groupService.changeGroup(groupDto);
+            log.info("[GroupController] setGroupTour Success : {}", groupDto.getGroupId());
+            return ResponseEntity.ok(groupResponseDto);
+        }catch (IllegalArgumentException e){
+            log.error("[GroupController] setGroupTour 그룹이 존재하지 않습니다.");
             return ResponseEntity.badRequest().build();
         }
     }

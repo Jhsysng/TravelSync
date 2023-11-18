@@ -9,6 +9,7 @@ public interface GroupService {
     List<GroupMemberDto> getGroupMembers(Long groupId);
     GroupResponseDto getGroup(Long groupId);
     GroupResponseDto saveGroup(GroupCreateDto groupCreateDto);
+    GroupResponseDto changeGroup(GroupDto groupDto);
     GroupInfoDto joinGroup(String userId, GroupJoinDto groupJoinDto);
 
 
