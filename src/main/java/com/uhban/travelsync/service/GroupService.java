@@ -1,15 +1,15 @@
 package com.uhban.travelsync.service;
 
-import com.uhban.travelsync.data.dto.group.GroupCreateDto;
-import com.uhban.travelsync.data.dto.group.GroupDto;
-import com.uhban.travelsync.data.dto.group.GroupInfoDto;
-import com.uhban.travelsync.data.dto.group.GroupResponseDto;
+import com.uhban.travelsync.data.dto.group.*;
 
 import java.util.List;
 
 public interface GroupService {
     List<GroupInfoDto> getGroupByUserId(String userId);
+    List<GroupMemberDto> getGroupMembers(Long groupId);
     GroupResponseDto getGroup(Long groupId);
     GroupResponseDto saveGroup(GroupCreateDto groupCreateDto);
+    GroupInfoDto joinGroup(String userId, GroupJoinDto groupJoinDto);
+
 
 }

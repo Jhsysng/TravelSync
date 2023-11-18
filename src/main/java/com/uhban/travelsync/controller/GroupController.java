@@ -1,16 +1,15 @@
 package com.uhban.travelsync.controller;
 
 import com.uhban.travelsync.config.auth.PrincipalDetails;
-import com.uhban.travelsync.data.dto.group.GroupCreateDto;
-import com.uhban.travelsync.data.dto.group.GroupInfoDto;
-import com.uhban.travelsync.data.dto.group.GroupResponseDto;
+import com.uhban.travelsync.data.dto.group.*;
 import com.uhban.travelsync.service.GroupService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +18,10 @@ import java.util.List;
 @RestController
 public class GroupController {
     private final GroupService groupService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public GroupController(GroupService groupService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public GroupController(GroupService groupService) {
         this.groupService = groupService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @GetMapping("/group/info/{userId}")
@@ -40,6 +37,19 @@ public class GroupController {
             GroupResponseDto groupResponseDto = groupService.getGroup(groupId);
             return ResponseEntity.ok(groupResponseDto);
         }catch (IllegalArgumentException e){
+            log.error("[GroupController] getGroupDetail 그룹이 존재하지 않습니다.");
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/group/members/{groupId}")
+    public ResponseEntity<List<GroupMemberDto>> getMembers(@PathVariable Long groupId){
+        log.info("[GroupController] getGroupDetail groupId : {}", groupId);
+        try{
+            List<GroupMemberDto> groupMemberDtoList = groupService.getGroupMembers(groupId);
+            log.info("[GroupController] getMembers Success : {}", groupId);
+            return ResponseEntity.ok(groupMemberDtoList);
+        }catch (EntityNotFoundException e){
             log.error("[GroupController] getGroupDetail 그룹이 존재하지 않습니다.");
             return ResponseEntity.notFound().build();
         }
@@ -70,10 +80,31 @@ public class GroupController {
                 .endDate(groupCreateDto.getEndDate())
                 .nation(groupCreateDto.getNation())
                 .tourCompany(groupCreateDto.getTourCompany())
-                .groupPassword(bCryptPasswordEncoder.encode(groupCreateDto.getGroupPassword()))
+                .groupPassword(groupCreateDto.getGroupPassword())
                 .build();
         log.info("[GroupController] saveGroup groupCreateDto : {}", groupCreateDto1);
         return ResponseEntity.ok(groupService.saveGroup(groupCreateDto));
+    }
+
+    @PostMapping("/group/join")
+    public ResponseEntity<GroupInfoDto> joinGroup(@RequestBody GroupJoinDto groupJoinDto) {
+        log.info("[GroupController] joinGroup groupId : {}", groupJoinDto.getGroupId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = "";
+        if (authentication != null && authentication.getPrincipal() instanceof PrincipalDetails principalDetails) {
+            userId = principalDetails.getUserId();
+        } else {
+            log.error("[GroupController] joinGroup 인증되지 않은 사용자입니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            GroupInfoDto groupInfoDto = groupService.joinGroup(userId, groupJoinDto);
+            log.info("[GroupController] joinGroup Success : {}", groupInfoDto.getGroupId());
+            return ResponseEntity.ok(groupInfoDto);
+        } catch (IllegalArgumentException e) {
+            log.error("[GroupController] 그룹 혹은 유저, 비밀번호가 틀립니다.");
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }

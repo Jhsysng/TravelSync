@@ -1,9 +1,6 @@
 package com.uhban.travelsync.service.impl;
 
-import com.uhban.travelsync.data.dto.group.GroupCreateDto;
-import com.uhban.travelsync.data.dto.group.GroupInfoDto;
-import com.uhban.travelsync.data.dto.group.GroupMemberDto;
-import com.uhban.travelsync.data.dto.group.GroupResponseDto;
+import com.uhban.travelsync.data.dto.group.*;
 import com.uhban.travelsync.data.entity.Group;
 import com.uhban.travelsync.data.entity.Group_User;
 import com.uhban.travelsync.data.entity.User;
@@ -13,6 +10,7 @@ import com.uhban.travelsync.data.repository.UserRepository;
 import com.uhban.travelsync.service.GroupService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +26,13 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final GroupUserRepository groupUserRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, GroupUserRepository groupUserRepository) {
+    public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, GroupUserRepository groupUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
         this.groupUserRepository = groupUserRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     @Transactional
     public List<GroupInfoDto> getGroupByUserId(String userId) {
@@ -78,6 +78,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Transactional(readOnly = true)
     public List<GroupMemberDto> getGroupMembers(Long groupId) {
+        log.info("[GroupServiceImpl] getGroupMembers groupId : {}", groupId);
         return groupRepository.findById(groupId)
                 .map(group -> group.getGroupUsers()
                         .stream()
@@ -108,6 +109,7 @@ public class GroupServiceImpl implements GroupService {
                 .endDate(groupCreateDto.getEndDate())
                 .nation(groupCreateDto.getNation())
                 .tourCompany(groupCreateDto.getTourCompany())
+                .groupPassword(bCryptPasswordEncoder.encode(groupCreateDto.getGroupPassword()))
                 .build();
 
         groupRepository.save(group);
@@ -131,6 +133,40 @@ public class GroupServiceImpl implements GroupService {
                 .tourCompany(group.getTourCompany())
                 .toggleLoc(group.getToggleLoc())
                 .build();
+    }
+
+    @Transactional
+    public GroupInfoDto joinGroup(String userId, GroupJoinDto groupJoinDto){
+        log.info("[GroupServiceImpl] joinGroup userId : {} groupId {}", userId, groupJoinDto.getGroupId());
+        Group group = groupRepository.findByGroupId(groupJoinDto.getGroupId())
+                .orElseThrow(() -> {
+                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupJoinDto.getGroupId());
+                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupJoinDto.getGroupId());
+                });
+        if(!bCryptPasswordEncoder.matches(groupJoinDto.getGroupPassword(), group.getGroupPassword())){
+            log.error("[GroupServiceImpl] joinGroup 비밀번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> {
+                    log.error("해당 사용자 : {}를 찾을 수 없습니다. : ", userId);
+                    throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다. : " + userId);
+                });
+        Group_User groupUser = Group_User.builder()
+                .user(user)
+                .group(group)
+                .build();
+        groupUserRepository.save(groupUser);
+        log.info("[GroupServiceImpl] joinGroup Success : {} {}", userId, groupJoinDto.getGroupId());
+        return GroupInfoDto.builder()
+                .groupId(group.getGroupId())
+                .guide(group.getGuide().getName()) // 가이드의 이름
+                .groupName(group.getGroupName())
+                .startDate(group.getStartDate())
+                .endDate(group.getEndDate())
+                .tourCompany(group.getTourCompany())
+                .build();
+
     }
 
 }
