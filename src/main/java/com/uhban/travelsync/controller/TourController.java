@@ -29,6 +29,7 @@ public class TourController {
     @GetMapping("/tour/{groupId}")
     public ResponseEntity<TourResponseDto> getGroupTour(@PathVariable Long groupId) {
         log.info("[TourController] getGroupTour groupId : {}", groupId);
+        //todo : [TourController] getGroupTour 인증된 사용자가 그룹에 속해있는지 확인
         Long tourId = groupService.getGroup(groupId).getTourId();
         if(tourId != null){
             log.info("[TourController] getGroupTour tourId : {}", tourId);
@@ -42,6 +43,14 @@ public class TourController {
     @GetMapping("/tour/list/{userId}")
     public ResponseEntity<List<TourResponseDto>> getTourList(@PathVariable String userId) {
         log.info("[TourController] getTourList userId : {}", userId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String authId = principalDetails.getUserId();
+        if(!authId.equals(userId)){
+            log.error("[TourController] getTourList 인증된 사용자가 아닙니다.");
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(tourService.getTourList(userId));
     }
     @PostMapping("/tour")

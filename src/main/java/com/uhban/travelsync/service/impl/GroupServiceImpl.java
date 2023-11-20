@@ -218,5 +218,10 @@ public class GroupServiceImpl implements GroupService {
                 .build();
 
     }
+    @Transactional
+    public boolean isUserInGroup(String userId, Long groupId){
+        log.info("[GroupServiceImpl] isUserInGroup userId : {} groupId {}", userId, groupId);
+        return groupUserRepository.existsByUser_UserIdAndGroup_GroupId(userId, groupId);
+    }
 
 }

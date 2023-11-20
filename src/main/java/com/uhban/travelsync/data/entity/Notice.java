@@ -23,9 +23,8 @@ public class Notice {
     private Group group;
 
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm", timezone="Asia/Seoul")
-    private Date date;
+    private Date noticeDate;
 
-    private Double latitude;
-    private Double longitude;
-    private String content;
+    private Double noticeLatitude;
+    private Double noticeLongitude;
 }

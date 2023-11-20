@@ -33,6 +33,7 @@ public class GroupController {
     @GetMapping("/group/detail/{groupId}")
     public ResponseEntity<GroupResponseDto> getGroupDetail(@PathVariable Long groupId) {
         log.info("[GroupController] getGroupDetail groupId : {}", groupId);
+        //todo : [GroupController] getGroupDetail 인증된 사용자가 그룹에 속해있는지 확인
         try{
             GroupResponseDto groupResponseDto = groupService.getGroup(groupId);
             return ResponseEntity.ok(groupResponseDto);
@@ -45,6 +46,7 @@ public class GroupController {
     @GetMapping("/group/members/{groupId}")
     public ResponseEntity<List<GroupMemberDto>> getMembers(@PathVariable Long groupId){
         log.info("[GroupController] getGroupDetail groupId : {}", groupId);
+        //todo : [GroupController] getMembers 인증된 사용자가 그룹에 속해있는지 확인
         try{
             List<GroupMemberDto> groupMemberDtoList = groupService.getGroupMembers(groupId);
             log.info("[GroupController] getMembers Success : {}", groupId);
@@ -114,11 +116,11 @@ public class GroupController {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String userId = principalDetails.getUserId();
 
-        if(userId.equals(groupDto.getGuide())){
+        if(userId.equals(groupService.getGroup(groupDto.getGroupId()).getGuide())){
             log.info("[GroupController] setGroupTour 그룹 여행지를 변경합니다.");
         }else{
             log.error("[GroupController] setGroupTour 본인이 아닌 유저가 그룹 여행지를 변경합니다.");
-            return ResponseEntity.badRequest().build();
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try{
             GroupResponseDto groupResponseDto = groupService.changeGroup(groupDto);

@@ -11,6 +11,7 @@ public interface GroupService {
     GroupResponseDto saveGroup(GroupCreateDto groupCreateDto);
     GroupResponseDto changeGroup(GroupDto groupDto);
     GroupInfoDto joinGroup(String userId, GroupJoinDto groupJoinDto);
+    boolean isUserInGroup(String userId, Long groupId);
 
 
 }
