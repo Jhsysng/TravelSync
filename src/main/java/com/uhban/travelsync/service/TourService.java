@@ -6,6 +6,8 @@ import com.uhban.travelsync.data.dto.tour.TourResponseDto;
 import java.util.List;
 
 public interface TourService {
-    List<TourResponseDto> getTour(String userId);
+
+    TourResponseDto getTour(Long tourId);
+    List<TourResponseDto> getTourList(String userId);
     TourResponseDto saveTour(String userId, TourCreateDto tourCreateDto);
 }
