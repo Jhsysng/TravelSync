@@ -2,6 +2,7 @@ package com.uhban.travelsync.controller;
 
 import com.uhban.travelsync.config.auth.PrincipalDetails;
 import com.uhban.travelsync.data.dto.tour.TourCreateDto;
+import com.uhban.travelsync.data.dto.tour.TourDto;
 import com.uhban.travelsync.data.dto.tour.TourResponseDto;
 import com.uhban.travelsync.service.GroupService;
 import com.uhban.travelsync.service.TourService;
@@ -43,7 +44,7 @@ public class TourController {
         log.info("[TourController] getTourList userId : {}", userId);
         return ResponseEntity.ok(tourService.getTourList(userId));
     }
-    @PostMapping("/tour/create")
+    @PostMapping("/tour")
     public ResponseEntity<TourResponseDto> createTour(@RequestBody TourCreateDto tourCreateDto) {
         log.info("[TourController] createTour tourName : {}", tourCreateDto.getTourName());
 
@@ -53,4 +54,26 @@ public class TourController {
 
         return ResponseEntity.ok(tourService.saveTour(userId, tourCreateDto));
     }
+
+    @PutMapping("/tour")
+    public ResponseEntity<TourResponseDto> changeTour(@RequestBody TourDto tourDto){
+        log.info("[TourController] changeTour tourId : {}", tourDto.getTourId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String userId = principalDetails.getUserId();
+
+        return ResponseEntity.ok(tourService.changeTour(userId, tourDto));
+    }
+
+    @DeleteMapping("/tour/{tourId}")
+    public ResponseEntity<String> deleteTour(@PathVariable Long tourId){
+        log.info("[TourController] deleteTour tourId : {}", tourId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String userId = principalDetails.getUserId();
+
+        tourService.deleteTour(userId, tourId);
+        return ResponseEntity.ok("delete success");
+    }
+
 }

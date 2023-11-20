@@ -1,6 +1,7 @@
 package com.uhban.travelsync.service.impl;
 
 import com.uhban.travelsync.data.dto.tour.TourCreateDto;
+import com.uhban.travelsync.data.dto.tour.TourDto;
 import com.uhban.travelsync.data.dto.tour.TourResponseDto;
 import com.uhban.travelsync.data.entity.Tour;
 import com.uhban.travelsync.data.entity.User;
@@ -83,4 +84,46 @@ public class TourServiceImpl implements TourService {
                 .build();
     }
 
+    @Transactional
+    public TourResponseDto changeTour(String userId, TourDto tourDto){
+        log.info("[TourService] tourChange : {}", tourDto.getTourId());
+        Tour tour = tourRepository.findById(tourDto.getTourId())
+                .orElseThrow(() -> {
+                    log.error("해당 여행 : {}를 찾을 수 없습니다. : ", tourDto.getTourId());
+                    throw new IllegalArgumentException("해당 여행을 찾을 수 없습니다. : " + tourDto.getTourId());
+                });
+        if(!tour.getUser().getUserId().equals(userId)){
+            log.error("해당 여행 : {}를 수정할 수 없습니다. : ", tourDto.getTourId());
+            throw new IllegalArgumentException("해당 여행을 수정할 수 없습니다. : " + tourDto.getTourId());
+        }
+        tourRepository.save(Tour.builder()
+                .tourId(tour.getTourId())
+                .user(tour.getUser())
+                .tourName(tourDto.getTourName())
+                .tourCompany(tourDto.getTourCompany())
+                .build());
+        log.info("[TourService] tourChange Success : {}", tourDto.getTourId());
+        return TourResponseDto.builder()
+                .tourId(tourDto.getTourId())
+                .tourName(tourDto.getTourName())
+                .tourCompany(tourDto.getTourCompany())
+                .build();
+    }
+
+
+    @Transactional
+    public void deleteTour(String userId, Long tourId) {
+        log.info("[TourService] deleteTour : {}", tourId);
+        Tour tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> {
+                    log.error("해당 여행 : {}를 찾을 수 없습니다. : ", tourId);
+                    throw new IllegalArgumentException("해당 여행을 찾을 수 없습니다. : " + tourId);
+                });
+        if(!tour.getUser().getUserId().equals(userId)){
+            log.error("해당 여행 : {}를 삭제할 수 없습니다. : ", tourId);
+            throw new IllegalArgumentException("해당 여행을 삭제할 수 없습니다. : " + tourId);
+        }
+        tourRepository.deleteById(tourId);
+        log.info("[TourService] deleteTour Success : {}", tourId);
+    }
 }
