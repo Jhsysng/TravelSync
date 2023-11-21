@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
 import java.util.Date;
-
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="plan_table")
@@ -27,16 +28,16 @@ public class Plan {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm", timezone="Asia/Seoul")
     private LocalTime time;
 
-    private String content;
+    private String planContent;
     private String planTitle;
 
     @Builder
-    public Plan(Long planId, Tour tour, Integer day, LocalTime time, String content, String planTitle) {
+    public Plan(Long planId, Tour tour, Integer day, LocalTime time, String planContent, String planTitle) {
         this.planId = planId;
         this.tour = tour;
         this.day = day;
         this.time = time;
-        this.content = content;
+        this.planContent = planContent;
         this.planTitle = planTitle;
     }
 }
