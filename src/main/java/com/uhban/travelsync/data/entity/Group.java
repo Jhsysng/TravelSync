@@ -1,8 +1,10 @@
 package com.uhban.travelsync.data.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,12 +25,15 @@ public class Group {
     private User guide;
 
     private String groupName;
-    private String toggleLoc;
     private String groupPassword;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
     private String nation;
     private String tourCompany;
+
+    private Boolean toggleLoc;
 
     @OneToOne
     @JoinColumn(name = "tourId", referencedColumnName = "tourId")
@@ -41,12 +46,12 @@ public class Group {
     private List<Group_User> groupUsers = new ArrayList<>();
 
     @Builder
-    public Group(Long groupId, User guide, String groupName, String toggleLoc, String groupPassword, Date startDate,
+    public Group(Long groupId, User guide, String groupName, Boolean toggleLoc, String groupPassword, Date startDate,
                  Date endDate, String nation, String tourCompany, Tour tour) {
         this.groupId = groupId;
         this.guide = guide;
         this.groupName = groupName;
-        this.toggleLoc = toggleLoc;
+        this.toggleLoc = (toggleLoc != null) ? toggleLoc : false;;
         this.groupPassword = groupPassword;
         this.startDate = startDate;
         this.endDate = endDate;

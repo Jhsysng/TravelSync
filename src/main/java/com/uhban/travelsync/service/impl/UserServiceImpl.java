@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
                 .userId(userDto.getUserId())
                 .password(userDto.getPassword())
                 .name(userDto.getName())
+                .phone(userDto.getPhone())
                 .build();
         userRepository.save(user);
     }

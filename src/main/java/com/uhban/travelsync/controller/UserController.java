@@ -47,8 +47,13 @@ public class UserController {
 
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@RequestBody UserDto userDto) {
+        //todo : [UserController] value validation , password validation
         log.info("userSignUpDTO : {}", userDto.getUserId());
         userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
+        if(userService.userExists(userDto.getUserId())) {
+            log.info("SingUp Fail");
+            return ResponseEntity.ok("SingUp Fail");
+        }
         userService.saveUser(userDto);
         log.info("SingUp Success");
         return ResponseEntity.ok("SingUp Success");
