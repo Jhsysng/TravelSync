@@ -1,5 +1,6 @@
 package com.uhban.travelsync.data.dto.notice;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.Date;
 public class NoticeChangeDto {
     private Long noticeId;
     private Long groupId;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private Date noticeDate;
     private Double noticeLatitude;
     private Double noticeLongitude;

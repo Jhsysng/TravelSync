@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class NoticeResponseDto {
     private Long noticeId;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private Date noticeDate;
     private Double noticeLatitude;
     private Double noticeLongitude;

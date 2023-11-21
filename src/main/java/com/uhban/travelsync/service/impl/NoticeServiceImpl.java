@@ -37,7 +37,7 @@ public class NoticeServiceImpl implements NoticeService {
             throw new IllegalArgumentException("Group not found for ID: " + groupId);
         }
 
-        List<Notice> noticeList = noticeRepository.findAllByGroup(optionalGroup.get().getGroupId());
+        List<Notice> noticeList = noticeRepository.findAllByGroup_GroupId(optionalGroup.get().getGroupId());
         log.info("[NoticeService] getNoticeList Success : {}", groupId);
         return noticeList.stream()
                 .map(notice -> new NoticeResponseDto(

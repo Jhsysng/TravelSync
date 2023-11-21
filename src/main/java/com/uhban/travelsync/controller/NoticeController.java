@@ -5,7 +5,6 @@ import com.uhban.travelsync.config.auth.PrincipalDetails;
 import com.uhban.travelsync.data.dto.notice.NoticeChangeDto;
 import com.uhban.travelsync.data.dto.notice.NoticeCreateDto;
 import com.uhban.travelsync.data.dto.notice.NoticeResponseDto;
-import com.uhban.travelsync.data.entity.Notice;
 import com.uhban.travelsync.service.GroupService;
 import com.uhban.travelsync.service.NoticeService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ public class NoticeController {
     }
 
     @GetMapping("/notice/{groupId}")
-    public ResponseEntity<List<NoticeResponseDto>> getNoticeList(Long groupId){
+    public ResponseEntity<List<NoticeResponseDto>> getNoticeList(@PathVariable Long groupId){
         log.info("[NoticeController] getNoticeList groupId : {}", groupId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
@@ -73,5 +72,4 @@ public class NoticeController {
         noticeService.deleteNotice(userId, noticeId);
         return ResponseEntity.ok().build();
     }
-
 }
