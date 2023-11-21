@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface GroupUserRepository extends JpaRepository<Group_User, GroupUserId>{
 
     boolean existsByUser_UserIdAndGroup_GroupId(String userId, Long groupId);
+    List<Group_User> findAllByGroup_GroupId(Long groupId);
 }

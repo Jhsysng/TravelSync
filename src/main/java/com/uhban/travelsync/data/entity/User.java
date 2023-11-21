@@ -22,8 +22,8 @@ public class User {
     private String phone;
     private String password;
 
-    private String latitude;
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
 
     @OneToMany(mappedBy = "user")
     private List<Group_User> groupUsers = new ArrayList<>();
