@@ -1,14 +1,14 @@
 package com.uhban.travelsync.controller;
 
+import com.uhban.travelsync.config.auth.PrincipalDetails;
 import com.uhban.travelsync.data.dto.plan.PlanChangeDto;
 import com.uhban.travelsync.data.dto.plan.PlanCreateDto;
 import com.uhban.travelsync.data.dto.plan.PlanResponseDto;
 import com.uhban.travelsync.service.PlanService;
-import com.uhban.travelsync.util.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +29,9 @@ public class PlanController {
     }
 
     @PostMapping("/plan")
-    public ResponseEntity<PlanResponseDto> createPlan(@RequestBody PlanCreateDto planCreateDto){
+    public ResponseEntity<PlanResponseDto> createPlan(@RequestBody PlanCreateDto planCreateDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[PlanController] createPlan tourId : {}", planCreateDto.getTourId());
-        String userId = SecurityUtils.getCurrentUserId();
+        String userId = principalDetails.getUserId();
         if(userId == null){
             log.error("[PlanController] createPlan 인증된 사용자가 아닙니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -40,9 +40,10 @@ public class PlanController {
     }
 
     @PutMapping("/plan")
-    public ResponseEntity<PlanResponseDto> editPlan(@RequestBody PlanChangeDto planChangeDto){
+    public ResponseEntity<PlanResponseDto> editPlan(@RequestBody PlanChangeDto planChangeDto,
+                                                    @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[PlanController] editPlan planId : {}", planChangeDto.getPlanId());
-        String userId = SecurityUtils.getCurrentUserId();
+        String userId = principalDetails.getUserId();
         if(userId == null){
             log.error("[PlanController] editPlan 인증된 사용자가 아닙니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -50,9 +51,10 @@ public class PlanController {
         return ResponseEntity.ok(planService.changePlan(userId, planChangeDto));
     }
     @DeleteMapping("/plan/{planId}")
-    public ResponseEntity<String> deletePlan(@PathVariable Long planId){
+    public ResponseEntity<String> deletePlan(@PathVariable Long planId,
+                                             @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[PlanController] deletePlan planId : {}", planId);
-        String userId = SecurityUtils.getCurrentUserId();
+        String userId = principalDetails.getUserId();
         if(userId == null){
             log.error("[PlanController] deletePlan 인증된 사용자가 아닙니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
