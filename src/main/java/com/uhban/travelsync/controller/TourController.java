@@ -4,16 +4,12 @@ import com.uhban.travelsync.config.auth.PrincipalDetails;
 import com.uhban.travelsync.data.dto.tour.TourCreateDto;
 import com.uhban.travelsync.data.dto.tour.TourDto;
 import com.uhban.travelsync.data.dto.tour.TourResponseDto;
-import com.uhban.travelsync.data.repository.GroupUserRepository;
 import com.uhban.travelsync.service.GroupService;
 import com.uhban.travelsync.service.TourService;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

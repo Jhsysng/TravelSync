@@ -13,6 +13,9 @@ app-prod.yml
 oauth.yml
 oauth-dev.yml
 oauth-prod.yml
+docker-compose.yml
+.env.db
+.env.dev
 
 
 ### STS ###
