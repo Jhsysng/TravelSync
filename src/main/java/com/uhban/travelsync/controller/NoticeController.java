@@ -10,6 +10,7 @@ import com.uhban.travelsync.service.NoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +29,9 @@ public class NoticeController {
     }
 
     @GetMapping("/notice/{groupId}")
-    public ResponseEntity<List<NoticeResponseDto>> getNoticeList(@PathVariable Long groupId){
+    public ResponseEntity<List<NoticeResponseDto>> getNoticeList(@PathVariable Long groupId
+        , @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[NoticeController] getNoticeList groupId : {}", groupId);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String userId = principalDetails.getUserId();
 
         if(!groupService.isUserInGroup(userId, groupId)){
@@ -43,30 +43,23 @@ public class NoticeController {
     }
 
     @PostMapping("/notice")
-    public ResponseEntity<NoticeResponseDto> createNotice(@RequestBody NoticeCreateDto noticeCreateDto){
+    public ResponseEntity<NoticeResponseDto> createNotice(@RequestBody NoticeCreateDto noticeCreateDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[NoticeController] createNotice groupId : {}", noticeCreateDto.getGroupId());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String userId = principalDetails.getUserId();
-
         return ResponseEntity.ok(noticeService.saveNotice(userId, noticeCreateDto));
     }
 
     @PutMapping("/notice")
-    public ResponseEntity<NoticeResponseDto> editNotice(@RequestBody NoticeChangeDto noticeChangeDto){
+    public ResponseEntity<NoticeResponseDto> editNotice(@RequestBody NoticeChangeDto noticeChangeDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[NoticeController] editNotice noticeId : {}", noticeChangeDto.getNoticeId());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String userId = principalDetails.getUserId();
 
         return ResponseEntity.ok(noticeService.changeNotice(userId, noticeChangeDto));
     }
 
     @DeleteMapping("/notice/{noticeId}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId){
+    public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId, @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[NoticeController] deleteNotice noticeId : {}", noticeId);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String userId = principalDetails.getUserId();
 
         noticeService.deleteNotice(userId, noticeId);

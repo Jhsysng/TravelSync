@@ -9,11 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.security.Principal;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +22,6 @@ public class SecurityConfig {
         this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -33,7 +30,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests->
                         requests
-                            .requestMatchers("/user/login", "/user/signup","/user/check/**").permitAll() // 로그인 및 회원가입 혹은 공개 API에 대한 접근 허용
+                            .requestMatchers("/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs", "/api-docs/**", "/v3/api-docs/**", "/user/login", "/user/signup","/user/check/**").permitAll() // 로그인 및 회원가입 혹은 공개 API에 대한 접근 허용
                             .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -13,6 +13,4 @@ public interface UserService {
     UserResponseDto changeUser(UserChangeDto userChangeDto);
     TokenResponseDto generateTokens (PrincipalDetails principalDetails);
     boolean userExists(String userId);
-
-
 }
