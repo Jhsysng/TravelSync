@@ -11,8 +11,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,24 +24,28 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
 
 
-    public UserController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
+    public UserController(AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
         this.authenticationManager = authenticationManager;
     }
     @GetMapping("/user/info/{userId}")
-    public ResponseEntity<?> getUserInfo(@PathVariable String userId) {
+    public ResponseEntity<UserResponseDto> getUserInfo(@PathVariable String userId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[UserController] getUser userId : {}", userId);
-        return new ResponseEntity<UserResponseDto>(userService.getUser(userId), HttpStatus.OK);
+        if (!userId.equals(principalDetails.getUserId())) {
+            log.error("[UserController] getUser 인증된 사용자가 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
     @GetMapping("/user/check/{userId}")
     public ResponseEntity<String> checkUser(@PathVariable String userId) {
         log.info("[UserController] checkUser userId : {}", userId);
         if (userService.userExists(userId)) {
-            return new ResponseEntity<String>("already exists", HttpStatus.OK);
+            return new ResponseEntity<>("already exists", HttpStatus.OK);
         }else {
-            return new ResponseEntity<String>("not exists", HttpStatus.OK);
+            return new ResponseEntity<>("not exists", HttpStatus.OK);
         }
     }
 
@@ -68,19 +72,22 @@ public class UserController {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("[UserController]login Success : {}", loginDto.getUserId());
-            return new ResponseEntity<TokenResponseDto>(userService.generateTokens((PrincipalDetails) authentication.getPrincipal()), HttpStatus.OK);
+            return new ResponseEntity<>(userService.generateTokens((PrincipalDetails) authentication.getPrincipal()), HttpStatus.OK);
         } catch (BadCredentialsException e) {
-            return new ResponseEntity<String>("잘못된 비밀번호 입니다.", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("잘못된 비밀번호 입니다.", HttpStatus.UNAUTHORIZED);
         } catch (InternalAuthenticationServiceException e) {
-            return new ResponseEntity<String>("잘못된 아이디 입니다.", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("잘못된 아이디 입니다.", HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PutMapping("/user/change")
-    public ResponseEntity<?> changeUser(@RequestBody UserChangeDto userChangeDto) {
+    public ResponseEntity<UserResponseDto> changeUser(@RequestBody UserChangeDto userChangeDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        String userId = principalDetails.getUserId();
+        if (!userId.equals(userChangeDto.getUserId())) {
+            log.error("[UserController] changeUser 인증된 사용자가 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         log.info("[UserController] changeUser userId : {}", userChangeDto.getUserId());
-        userService.changeUser(userChangeDto);
-        log.info("[UserController] changeUser Success : {}", userChangeDto.getUserId());
-        return new ResponseEntity<TokenResponseDto>(userService.generateTokens((PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()), HttpStatus.OK);
+        return ResponseEntity.ok(userService.changeUser(userChangeDto));
     }
 }
