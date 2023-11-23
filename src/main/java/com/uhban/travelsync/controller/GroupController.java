@@ -26,7 +26,8 @@ public class GroupController {
     }
 
     @GetMapping("/group/info/{userId}")
-    public ResponseEntity<List<GroupInfoDto>> getGroupByUserId(@PathVariable String userId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<List<GroupInfoDto>> getGroupByUserId(@PathVariable final String userId
+            , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] getGroupByUserId userId : {}", userId);
         if (!userId.equals(principalDetails.getUserId())) {
             log.error("[GroupController] getGroupByUserId 인증된 사용자가 아닙니다.");
@@ -36,7 +37,8 @@ public class GroupController {
     }
 
     @GetMapping("/group/detail/{groupId}")
-    public ResponseEntity<GroupResponseDto> getGroupDetail(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<GroupResponseDto> getGroupDetail(@PathVariable Long groupId
+            , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] getGroupDetail groupId : {}", groupId);
         if(!groupService.isUserInGroup(principalDetails.getUserId(), groupId)){
             log.error("[GroupController] getGroupDetail 인증된 사용자가 그룹에 속해있지 않습니다.");
@@ -52,7 +54,8 @@ public class GroupController {
     }
 
     @GetMapping("/group/members/{groupId}")
-    public ResponseEntity<List<GroupMemberDto>> getMembers(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails){
+    public ResponseEntity<List<GroupMemberDto>> getMembers(@PathVariable Long groupId
+            , @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[GroupController] getGroupDetail groupId : {}", groupId);
         if(!groupService.isUserInGroup(principalDetails.getUserId(), groupId)){
             log.error("[GroupController] getGroupDetail 인증된 사용자가 그룹에 속해있지 않습니다.");
@@ -69,7 +72,8 @@ public class GroupController {
     }
 
     @PostMapping("/group/create")
-    public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto groupCreateDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto groupCreateDto
+            , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] saveGroup groupName : {}", groupCreateDto.getGroupName());
         if(!groupCreateDto.getGuide().equals(principalDetails.getUserId())){
             log.error("[GroupController] saveGroup 인증된 사용자가 아닙니다.");
@@ -80,7 +84,8 @@ public class GroupController {
     }
 
     @PostMapping("/group/join")
-    public ResponseEntity<GroupInfoDto> joinGroup(@RequestBody GroupJoinDto groupJoinDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<GroupInfoDto> joinGroup(@RequestBody GroupJoinDto groupJoinDto
+            , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] joinGroup groupId : {}", groupJoinDto.getGroupId());
         String userId = principalDetails.getUserId();
         try {
@@ -94,10 +99,9 @@ public class GroupController {
     }
 
     @PutMapping("/group/setting")
-    public ResponseEntity<GroupResponseDto> setGroupTour(@RequestBody GroupDto groupDto){
+    public ResponseEntity<GroupResponseDto> setGroupTour(@RequestBody GroupDto groupDto
+            , @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[GroupController] setGroupTour groupId : {}", groupDto.getGroupId());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String userId = principalDetails.getUserId();
 
         if(userId.equals(groupService.getGroup(groupDto.getGroupId()).getGuide())){
@@ -115,5 +119,4 @@ public class GroupController {
             return ResponseEntity.badRequest().build();
         }
     }
-
 }
