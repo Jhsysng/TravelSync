@@ -10,6 +10,7 @@ import com.uhban.travelsync.data.entity.User;
 import com.uhban.travelsync.data.repository.UserRepository;
 import com.uhban.travelsync.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
-
+    @Autowired
     public UserServiceImpl(UserRepository userRepository, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.tokenProvider = tokenProvider;

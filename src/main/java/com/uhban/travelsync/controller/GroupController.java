@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,28 +26,38 @@ public class GroupController {
     }
 
     @GetMapping("/group/info/{userId}")
-    public ResponseEntity<List<GroupInfoDto>> getGroupByUserId(@PathVariable String userId) {
+    public ResponseEntity<List<GroupInfoDto>> getGroupByUserId(@PathVariable String userId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] getGroupByUserId userId : {}", userId);
+        if (!userId.equals(principalDetails.getUserId())) {
+            log.error("[GroupController] getGroupByUserId 인증된 사용자가 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return ResponseEntity.ok(groupService.getGroupByUserId(userId));
     }
 
     @GetMapping("/group/detail/{groupId}")
-    public ResponseEntity<GroupResponseDto> getGroupDetail(@PathVariable Long groupId) {
+    public ResponseEntity<GroupResponseDto> getGroupDetail(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] getGroupDetail groupId : {}", groupId);
-        //todo : [GroupController] getGroupDetail 인증된 사용자가 그룹에 속해있는지 확인
+        if(!groupService.isUserInGroup(principalDetails.getUserId(), groupId)){
+            log.error("[GroupController] getGroupDetail 인증된 사용자가 그룹에 속해있지 않습니다.");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         try{
             GroupResponseDto groupResponseDto = groupService.getGroup(groupId);
             return ResponseEntity.ok(groupResponseDto);
         }catch (IllegalArgumentException e){
             log.error("[GroupController] getGroupDetail 그룹이 존재하지 않습니다.");
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/group/members/{groupId}")
-    public ResponseEntity<List<GroupMemberDto>> getMembers(@PathVariable Long groupId){
+    public ResponseEntity<List<GroupMemberDto>> getMembers(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails){
         log.info("[GroupController] getGroupDetail groupId : {}", groupId);
-        //todo : [GroupController] getMembers 인증된 사용자가 그룹에 속해있는지 확인
+        if(!groupService.isUserInGroup(principalDetails.getUserId(), groupId)){
+            log.error("[GroupController] getGroupDetail 인증된 사용자가 그룹에 속해있지 않습니다.");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         try{
             List<GroupMemberDto> groupMemberDtoList = groupService.getGroupMembers(groupId);
             log.info("[GroupController] getMembers Success : {}", groupId);
@@ -58,47 +69,20 @@ public class GroupController {
     }
 
     @PostMapping("/group/create")
-    public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto groupCreateDto) {
+    public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto groupCreateDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] saveGroup groupName : {}", groupCreateDto.getGroupName());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = "";
-        if (authentication != null && authentication.getPrincipal() instanceof PrincipalDetails principalDetails) {
-            userId = principalDetails.getUserId();
-        }else{
-            log.error("[GroupController] saveGroup 인증되지 않은 사용자입니다.");
-            return ResponseEntity.badRequest().build();
+        if(!groupCreateDto.getGuide().equals(principalDetails.getUserId())){
+            log.error("[GroupController] saveGroup 인증된 사용자가 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
-        if(groupCreateDto.getGuide().equals(userId)) {
-            log.info("[GroupController] saveGroup group 생성 합니다.");
-        } else {
-            log.error("[GroupController] saveGroup 본인이 아닌 유저가 그룹을 생성합니다.error");
-            return ResponseEntity.badRequest().build();
-        }
-        GroupCreateDto groupCreateDto1 = GroupCreateDto.builder()
-                .guide(groupCreateDto.getGuide())
-                .groupName(groupCreateDto.getGroupName())
-                .startDate(groupCreateDto.getStartDate())
-                .endDate(groupCreateDto.getEndDate())
-                .nation(groupCreateDto.getNation())
-                .tourCompany(groupCreateDto.getTourCompany())
-                .groupPassword(groupCreateDto.getGroupPassword())
-                .build();
-        log.info("[GroupController] saveGroup groupCreateDto : {}", groupCreateDto1);
+        log.info("[GroupController] saveGroup group 생성 시작 {}", groupCreateDto.getGroupName());
         return ResponseEntity.ok(groupService.saveGroup(groupCreateDto));
     }
 
     @PostMapping("/group/join")
-    public ResponseEntity<GroupInfoDto> joinGroup(@RequestBody GroupJoinDto groupJoinDto) {
+    public ResponseEntity<GroupInfoDto> joinGroup(@RequestBody GroupJoinDto groupJoinDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] joinGroup groupId : {}", groupJoinDto.getGroupId());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = "";
-        if (authentication != null && authentication.getPrincipal() instanceof PrincipalDetails principalDetails) {
-            userId = principalDetails.getUserId();
-        } else {
-            log.error("[GroupController] joinGroup 인증되지 않은 사용자입니다.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        String userId = principalDetails.getUserId();
         try {
             GroupInfoDto groupInfoDto = groupService.joinGroup(userId, groupJoinDto);
             log.info("[GroupController] joinGroup Success : {}", groupInfoDto.getGroupId());
