@@ -13,5 +13,9 @@ public interface GroupService {
     GroupInfoDto joinGroup(String userId, GroupJoinDto groupJoinDto);
     boolean isUserInGroup(String userId, Long groupId);
 
+    void deleteGroup(Long groupId);
+    void leaveGroup(String userId, Long groupId);
+
+
 
 }

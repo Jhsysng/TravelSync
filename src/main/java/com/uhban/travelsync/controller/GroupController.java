@@ -117,4 +117,32 @@ public class GroupController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/group/{groupId}")
+    public ResponseEntity<String> deleteGroup(@PathVariable Long groupId
+            , @AuthenticationPrincipal PrincipalDetails principalDetails){
+        log.info("[GroupController] deleteGroup groupId : {}", groupId);
+        String userId = principalDetails.getUserId();
+        if(!userId.equals(groupService.getGroup(groupId).getGuide())){
+            log.error("[GroupController] deleteGroup 인증된 사용자가 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        groupService.deleteGroup(groupId);
+        log.info("[GroupController] deleteGroup Success : {}", groupId);
+        return ResponseEntity.ok("delete success");
+    }
+
+    @DeleteMapping("/group/leave/{groupId}")
+    public ResponseEntity<String> leaveGroup(@PathVariable Long groupId
+            , @AuthenticationPrincipal PrincipalDetails principalDetails){
+        log.info("[GroupController] leaveGroup groupId : {}", groupId);
+        String userId = principalDetails.getUserId();
+        if(!groupService.isUserInGroup(userId, groupId)){
+            log.error("[GroupController] leaveGroup 인증된 사용자가 그룹에 속해있지 않습니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        groupService.leaveGroup(userId, groupId);
+        log.info("[GroupController] leaveGroup Success : {}", groupId);
+        return ResponseEntity.ok("leave success");
+    }
 }
