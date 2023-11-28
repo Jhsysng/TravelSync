@@ -224,4 +224,30 @@ public class GroupServiceImpl implements GroupService {
         return groupUserRepository.existsByUser_UserIdAndGroup_GroupId(userId, groupId);
     }
 
+    @Transactional
+    public void deleteGroup(Long groupId){
+        log.info("[GroupServiceImpl] deleteGroup groupId : {}", groupId);
+        //group 삭제
+        Group group = groupRepository.findByGroupId(groupId)
+                .orElseThrow(() -> {
+                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupId);
+                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupId);
+                });
+        groupRepository.delete(group);
+        log.info("[GroupServiceImpl] deleteGroup Success : {}", groupId);
+    }
+
+    @Transactional
+    public void leaveGroup(String userId, Long groupId){
+        log.info("[GroupServiceImpl] leaveGroup userId : {} groupId {}", userId, groupId);
+        //group에서 탈퇴 GroupUser 삭제
+        Group_User groupUser = groupUserRepository.findByUser_UserIdAndGroup_GroupId(userId, groupId)
+                .orElseThrow(() -> {
+                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupId);
+                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupId);
+                });
+        groupUserRepository.delete(groupUser);
+        log.info("[GroupServiceImpl] leaveGroup Success : {} {}", userId, groupId);
+    }
+
 }
