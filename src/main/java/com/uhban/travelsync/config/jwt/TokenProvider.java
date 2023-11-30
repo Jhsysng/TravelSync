@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Date;

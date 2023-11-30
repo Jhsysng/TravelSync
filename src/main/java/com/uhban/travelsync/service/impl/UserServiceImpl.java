@@ -21,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+
+    private static final String USER_NOT_FOUND_LOG = "해당 유저 : {}를 찾을 수 없습니다. : ";
+    private static final String USER_NOT_FOUND_EXCEPTION = "해당 유저를 찾을 수 없습니다. : ";
     @Autowired
     public UserServiceImpl(UserRepository userRepository, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
@@ -31,8 +34,8 @@ public class UserServiceImpl implements UserService {
         log.info("[UserService] getUser : {}", userId);
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> {
-                    log.error("해당 사용자 : {}를 찾을 수 없습니다. : ", userId);
-                    throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다. : " + userId);
+                    log.error(USER_NOT_FOUND_LOG, userId);
+                    throw new IllegalArgumentException(USER_NOT_FOUND_EXCEPTION + userId);
                 });
         log.info("[UserService] getUser Success : {}", userId);
         return UserResponseDto.builder()
@@ -57,8 +60,8 @@ public class UserServiceImpl implements UserService {
         log.info("[UserService] changeUser : {}", userChangeDto.getUserId());
         User user = userRepository.findByUserId(userChangeDto.getUserId())
                 .orElseThrow(() -> {
-                    log.error("해당 사용자 : {}를 찾을 수 없습니다. : ", userChangeDto.getUserId());
-                    throw new IllegalArgumentException("해당 사용자를 찾을 수 없습니다. : " + userChangeDto.getUserId());
+                    log.error(USER_NOT_FOUND_LOG, userChangeDto.getUserId());
+                    throw new IllegalArgumentException(USER_NOT_FOUND_EXCEPTION + userChangeDto.getUserId());
                 });
 
         User changeUser = User.builder()
@@ -83,7 +86,7 @@ public class UserServiceImpl implements UserService {
         String accessToken = tokenProvider.generateAccessToken(principalDetails);
         String refreshToken = tokenProvider.generateRefreshToken(principalDetails);
         /*
-        // Redis 에 저장 - 만료 시간 설정을 통해 자동 삭제 redis 기능 활성화시 @Transactional 추가
+        Redis 에 저장 - 만료 시간 설정을 통해 자동 삭제 redis 기능 활성화시 @Transactional 추가
         redisTemplate.opsForValue().set(
                 principalDetails.getUsername(),
                 refreshToken,

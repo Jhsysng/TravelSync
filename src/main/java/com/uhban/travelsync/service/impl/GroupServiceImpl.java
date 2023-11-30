@@ -31,6 +31,10 @@ public class GroupServiceImpl implements GroupService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TourRepository tourRepository;
 
+    private static final String GROUP_NOT_FOUND_LOG = "해당 그룹 : {}를 찾을 수 없습니다. : ";
+    private static final String GROUP_NOT_FOUND_EXCEPTION = "해당 그룹을 찾을 수 없습니다. : ";
+
+
     public GroupServiceImpl(GroupRepository groupRepository, UserRepository userRepository, GroupUserRepository groupUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder, TourRepository tourRepository) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
@@ -64,8 +68,8 @@ public class GroupServiceImpl implements GroupService {
     public GroupResponseDto getGroup(Long groupId) {
         Group group = groupRepository.findByGroupId(groupId)
                 .orElseThrow(() -> {
-                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupId);
-                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupId);
+                    log.error(GROUP_NOT_FOUND_LOG, groupId);
+                    throw new IllegalArgumentException(GROUP_NOT_FOUND_EXCEPTION + groupId);
                 });
         Long tourId = Optional.ofNullable(group.getTour())
                 .map(Tour::getTourId)
@@ -96,7 +100,7 @@ public class GroupServiceImpl implements GroupService {
                                 .userName(groupUser.getUser().getName())
                                 .build())
                         .collect(Collectors.toList()))
-                .orElseThrow(() -> new EntityNotFoundException("Group not found with id: " + groupId));
+                .orElseThrow(() -> new EntityNotFoundException(GROUP_NOT_FOUND_EXCEPTION + groupId));
     }
 
     @Transactional
@@ -147,8 +151,8 @@ public class GroupServiceImpl implements GroupService {
         log.info("[GroupServiceImpl] changeGroup groupId : {}", groupDto.getGroupId());
         Group group = groupRepository.findByGroupId(groupDto.getGroupId())
                 .orElseThrow(() -> {
-                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupDto.getGroupId());
-                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupDto.getGroupId());
+                    log.error(GROUP_NOT_FOUND_LOG, groupDto.getGroupId());
+                    throw new IllegalArgumentException(GROUP_NOT_FOUND_EXCEPTION + groupDto.getGroupId());
                 });
 
         // Update fields of the existing group
@@ -189,8 +193,8 @@ public class GroupServiceImpl implements GroupService {
         log.info("[GroupServiceImpl] joinGroup userId : {} groupId {}", userId, groupJoinDto.getGroupId());
         Group group = groupRepository.findByGroupId(groupJoinDto.getGroupId())
                 .orElseThrow(() -> {
-                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupJoinDto.getGroupId());
-                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupJoinDto.getGroupId());
+                    log.error(GROUP_NOT_FOUND_LOG, groupJoinDto.getGroupId());
+                    throw new IllegalArgumentException(GROUP_NOT_FOUND_EXCEPTION + groupJoinDto.getGroupId());
                 });
         if(!bCryptPasswordEncoder.matches(groupJoinDto.getGroupPassword(), group.getGroupPassword())){
             log.error("[GroupServiceImpl] joinGroup 비밀번호가 일치하지 않습니다.");
@@ -230,8 +234,8 @@ public class GroupServiceImpl implements GroupService {
         //group 삭제
         Group group = groupRepository.findByGroupId(groupId)
                 .orElseThrow(() -> {
-                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupId);
-                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupId);
+                    log.error(GROUP_NOT_FOUND_LOG, groupId);
+                    throw new IllegalArgumentException(GROUP_NOT_FOUND_EXCEPTION + groupId);
                 });
         groupRepository.delete(group);
         log.info("[GroupServiceImpl] deleteGroup Success : {}", groupId);
@@ -243,8 +247,8 @@ public class GroupServiceImpl implements GroupService {
         //group에서 탈퇴 GroupUser 삭제
         Group_User groupUser = groupUserRepository.findByUser_UserIdAndGroup_GroupId(userId, groupId)
                 .orElseThrow(() -> {
-                    log.error("해당 그룹 : {}를 찾을 수 없습니다. : ", groupId);
-                    throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다. : " + groupId);
+                    log.error(GROUP_NOT_FOUND_LOG, groupId);
+                    throw new IllegalArgumentException(GROUP_NOT_FOUND_EXCEPTION + groupId);
                 });
         groupUserRepository.delete(groupUser);
         log.info("[GroupServiceImpl] leaveGroup Success : {} {}", userId, groupId);

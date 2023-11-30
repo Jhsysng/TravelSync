@@ -20,7 +20,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        //UserDetails 구체화, override CustomImpl로 나누고 UserId를 Interface로 빼는 것이 좋을 수 있
+        //UserDetails 구체화, override CustomImpl 로 나누고 UserId를 Interface 로 빼는 것이 좋을 수 있
         User userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> {
                     log.error("해당 사용자 : {}를 찾을 수 없습니다. : ", userId);

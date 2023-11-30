@@ -55,28 +55,28 @@ public class JWTTokenAuthenticationFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException exception) {
             log.error("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("JWT Exception");
+            response.getWriter().write("token expired");
             return;
         } catch (UnsupportedJwtException exception) {
             log.error("Request to parse unsupported JWT : {} failed : {}", token, exception.getMessage());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("JWT Exception");
+            response.getWriter().write("JWT parsing error");
             return;
         } catch (MalformedJwtException exception) {
             log.error("Request to parse invalid JWT : {} failed : {}", token, exception.getMessage());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("JWT Exception");
+            response.getWriter().write("JWT invalid");
             return;
         } catch (SignatureException exception) {
             log.error("Request to parse JWT with invalid signature : {} failed : {}", token, exception.getMessage());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("JWT Exception");
+            response.getWriter().write("JWT invalid signature");
 
             return;
         } catch (IllegalArgumentException exception) {
             log.error("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write("JWT Exception");
+            response.getWriter().write("JWT empty or null");
 
             return;
         }
