@@ -3,7 +3,6 @@ package com.uhban.travelsync.data.entity;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 @Setter

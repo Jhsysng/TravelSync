@@ -41,10 +41,10 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Transactional
-    public LocationResponseDto getLocation(String userId, Long groupId){
+    public LocationResponseDto getLocation(String userId, Long groupId) {
         log.info("[LocationService] getLocation userId : {}", userId);
         //todo : [LocationService] getLocation 인증된 사용자가 그룹에 속해있는지 확인
-        if(!groupUserRepository.existsByUser_UserIdAndGroup_GroupId(userId, groupId)){
+        if (!groupUserRepository.existsByUser_UserIdAndGroup_GroupId(userId, groupId)) {
             log.error("[LocationService] getLocation 인증된 사용자가 그룹에 속해있지 않습니다.");
             throw new IllegalArgumentException("인증된 사용자가 그룹에 속해있지 않습니다.");
         }
@@ -57,6 +57,7 @@ public class LocationServiceImpl implements LocationService {
                 ))
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
     }
+
 
     @Transactional
     public List<LocationResponseDto> getLocations(String userId, Long groupId){

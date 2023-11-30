@@ -1,16 +1,17 @@
 package com.uhban.travelsync.data.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="user_table")
@@ -30,4 +31,14 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Tour> tours = new ArrayList<>();
+
+    @Builder
+    public User(String userId, String name, String phone, String password, Double latitude, Double longitude) {
+        this.userId = userId;
+        this.name = name;
+        this.phone = phone;
+        this.password = password;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

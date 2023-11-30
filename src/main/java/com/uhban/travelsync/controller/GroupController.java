@@ -140,6 +140,9 @@ public class GroupController {
         if(!groupService.isUserInGroup(userId, groupId)){
             log.error("[GroupController] leaveGroup 인증된 사용자가 그룹에 속해있지 않습니다.");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }else if(userId.equals(groupService.getGroup(groupId).getGuide())){
+            log.error("[GroupController] leaveGroup 가이드는 그룹을 탈퇴할 수 없습니다.");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         groupService.leaveGroup(userId, groupId);
         log.info("[GroupController] leaveGroup Success : {}", groupId);

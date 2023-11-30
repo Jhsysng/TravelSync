@@ -27,7 +27,7 @@ public class Tour {
     private String tourCompany;
 
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Plan> plans = new ArrayList<>();
+    private final List<Plan> plans = new ArrayList<>();
 
     @Builder
     public Tour(Long tourId, User user, String tourName, String tourCompany) {
