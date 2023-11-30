@@ -50,7 +50,7 @@ public class Group {
         this.groupId = groupId;
         this.guide = guide;
         this.groupName = groupName;
-        this.toggleLoc = (toggleLoc != null) ? toggleLoc : false;;
+        this.toggleLoc = (toggleLoc != null) ? toggleLoc : false;
         this.groupPassword = groupPassword;
         this.startDate = startDate;
         this.endDate = endDate;

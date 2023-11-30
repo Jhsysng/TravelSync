@@ -5,7 +5,6 @@ import com.uhban.travelsync.data.dto.user.TokenResponseDto;
 import com.uhban.travelsync.data.dto.user.UserChangeDto;
 import com.uhban.travelsync.data.dto.user.UserDto;
 import com.uhban.travelsync.data.dto.user.UserResponseDto;
-import com.uhban.travelsync.data.entity.User;
 
 public interface UserService {
     UserResponseDto getUser(String userId);
