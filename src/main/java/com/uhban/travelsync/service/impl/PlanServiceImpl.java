@@ -7,13 +7,11 @@ import com.uhban.travelsync.data.entity.Plan;
 import com.uhban.travelsync.data.entity.Tour;
 import com.uhban.travelsync.data.repository.PlanRepository;
 import com.uhban.travelsync.data.repository.TourRepository;
-import com.uhban.travelsync.data.repository.UserRepository;
 import com.uhban.travelsync.service.PlanService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

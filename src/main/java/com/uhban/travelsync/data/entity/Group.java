@@ -1,7 +1,6 @@
 package com.uhban.travelsync.data.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -1,7 +1,10 @@
 package com.uhban.travelsync.controller;
 
 import com.uhban.travelsync.config.auth.PrincipalDetails;
-import com.uhban.travelsync.data.dto.user.*;
+import com.uhban.travelsync.data.dto.user.LoginDto;
+import com.uhban.travelsync.data.dto.user.UserChangeDto;
+import com.uhban.travelsync.data.dto.user.UserDto;
+import com.uhban.travelsync.data.dto.user.UserResponseDto;
 import com.uhban.travelsync.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -51,7 +54,6 @@ public class UserController {
 
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@RequestBody UserDto userDto) {
-        //todo : [UserController] value validation , password validation
         log.info("userSignUpDTO : {}", userDto.getUserId());
         userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         if(userService.userExists(userDto.getUserId())) {

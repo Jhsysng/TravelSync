@@ -29,7 +29,6 @@ public class TourController {
     public ResponseEntity<TourResponseDto> getGroupTour(@PathVariable Long groupId
         , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[TourController] getGroupTour groupId : {}", groupId);
-        //todo : [TourController] getGroupTour 인증된 사용자가 그룹에 속해있는지 확인
         if(!groupService.isUserInGroup(principalDetails.getUserId(), groupId)){
             log.error("[TourController] getGroupTour 인증된 사용자가 그룹에 속해있지 않습니다.");
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

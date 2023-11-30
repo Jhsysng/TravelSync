@@ -1,7 +1,6 @@
 package com.uhban.travelsync.data.dto.user;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
