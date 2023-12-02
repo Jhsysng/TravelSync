@@ -13,8 +13,8 @@ import java.util.Collections;
 
 @OpenAPIDefinition(
         info = @Info(title = "TravelSync API 명세서",
-                description = " API 명세서",
-                version = "v1.0.0"))
+                description = "굴러라 프론트 ㅋㅋ v0.0.2-noticeTitle",
+                version = "v0.0.2"))
 @Configuration
 public class SwaggerConfig {
     @Bean

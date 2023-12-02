@@ -13,13 +13,15 @@ public class NoticeResponseDto {
     private Long noticeId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private Date noticeDate;
+    private String noticeTitle;
     private Double noticeLatitude;
     private Double noticeLongitude;
 
     @Builder
-    public NoticeResponseDto(Long noticeId, Date noticeDate, Double noticeLatitude, Double noticeLongitude) {
+    public NoticeResponseDto(Long noticeId, Date noticeDate, String noticeTitle, Double noticeLatitude, Double noticeLongitude) {
         this.noticeId = noticeId;
         this.noticeDate = noticeDate;
+        this.noticeTitle = noticeTitle;
         this.noticeLatitude = noticeLatitude;
         this.noticeLongitude = noticeLongitude;
     }

@@ -32,6 +32,7 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-web'
 	implementation 'org.springframework.security:spring-security-config'
 	implementation 'org.springframework.security:spring-security-core'
+	implementation "ca.pjer:logback-awslogs-appender:1.6.0"
 
 	//oauth2
 	implementation 'com.auth0:java-jwt:4.3.0'

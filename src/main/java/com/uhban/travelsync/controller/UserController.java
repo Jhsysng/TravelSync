@@ -57,12 +57,12 @@ public class UserController {
         log.info("userSignUpDTO : {}", userDto.getUserId());
         userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         if(userService.userExists(userDto.getUserId())) {
-            log.info("SingUp Fail");
-            return ResponseEntity.ok("SingUp Fail");
+            log.info("SignUp Fail");
+            return ResponseEntity.ok("SignUp Fail");
         }
         userService.saveUser(userDto);
-        log.info("SingUp Success");
-        return ResponseEntity.ok("SingUp Success");
+        log.info("SignUp Success");
+        return ResponseEntity.ok("SignUp Success");
     }
 
     @PostMapping("/user/login")

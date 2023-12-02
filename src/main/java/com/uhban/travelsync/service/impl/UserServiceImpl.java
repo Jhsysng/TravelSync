@@ -86,7 +86,8 @@ public class UserServiceImpl implements UserService {
         String accessToken = tokenProvider.generateAccessToken(principalDetails);
         String refreshToken = tokenProvider.generateRefreshToken(principalDetails);
         /*
-        Redis 에 저장 - 만료 시간 설정을 통해 자동 삭제 redis 기능 활성화시 @Transactional 추가
+
+        //Redis 에 저장 - 만료 시간 설정을 통해 자동 삭제 redis 기능 활성화시 @Transactional 추가
         redisTemplate.opsForValue().set(
                 principalDetails.getUsername(),
                 refreshToken,
