@@ -43,6 +43,7 @@ public class NoticeServiceImpl implements NoticeService {
                 .map(notice -> new NoticeResponseDto(
                         notice.getNoticeId(),
                         notice.getNoticeDate(),
+                        notice.getNoticeTitle(),
                         notice.getNoticeLatitude(),
                         notice.getNoticeLongitude()
                 ))
@@ -64,6 +65,7 @@ public class NoticeServiceImpl implements NoticeService {
 
         Notice notice = noticeRepository.save(Notice.builder()
                 .noticeDate(noticeCreateDto.getNoticeDate())
+                .noticeTitle(noticeCreateDto.getNoticeTitle())
                 .noticeLatitude(noticeCreateDto.getNoticeLatitude())
                 .noticeLongitude(noticeCreateDto.getNoticeLongitude())
                 .group(optionalGroup.get())
@@ -73,6 +75,7 @@ public class NoticeServiceImpl implements NoticeService {
         return NoticeResponseDto.builder()
                 .noticeId(notice.getNoticeId())
                 .noticeDate(noticeCreateDto.getNoticeDate())
+                .noticeTitle(noticeCreateDto.getNoticeTitle())
                 .noticeLatitude(noticeCreateDto.getNoticeLatitude())
                 .noticeLongitude(noticeCreateDto.getNoticeLongitude())
                 .build();
@@ -93,6 +96,7 @@ public class NoticeServiceImpl implements NoticeService {
         Notice changedNotice = noticeRepository.save(Notice.builder()
                 .noticeId(noticeChangeDto.getNoticeId())
                 .noticeDate(noticeChangeDto.getNoticeDate())
+                .noticeTitle(noticeChangeDto.getNoticeTitle())
                 .noticeLatitude(noticeChangeDto.getNoticeLatitude())
                 .noticeLongitude(noticeChangeDto.getNoticeLongitude())
                 .group(optionalNotice.get().getGroup())
@@ -101,6 +105,7 @@ public class NoticeServiceImpl implements NoticeService {
         return NoticeResponseDto.builder()
                 .noticeId(changedNotice.getNoticeId())
                 .noticeDate(changedNotice.getNoticeDate())
+                .noticeTitle(changedNotice.getNoticeTitle())
                 .noticeLatitude(changedNotice.getNoticeLatitude())
                 .noticeLongitude(changedNotice.getNoticeLongitude())
                 .build();
