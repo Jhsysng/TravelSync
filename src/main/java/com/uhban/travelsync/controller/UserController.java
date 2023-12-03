@@ -54,20 +54,29 @@ public class UserController {
 
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@RequestBody UserDto userDto) {
-        log.info("userSignUpDTO : {}", userDto.getUserId());
+        log.info("[UserController] signup userid : {}", userDto.getUserId());
+        //비밀번호 10자이상 특수문자 포함 검증 및 이메일 형식 아이디 검증
+        if (!userDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,}$")) {
+            log.error("[UserController] signup : 비밀번호가 조건에 맞지 않습니다.");
+            return ResponseEntity.badRequest().body("Not Password Format");
+        }else if(!userDto.getUserId().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+            log.error("[UserController] signup : 이메일 형식이 아닙니다.");
+            return ResponseEntity.badRequest().body("Not Email Format");
+        }
         userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         if(userService.userExists(userDto.getUserId())) {
-            log.info("SignUp Fail");
+            log.error("[UserController] signup SignUp Fail");
             return ResponseEntity.ok("SignUp Fail");
         }
         userService.saveUser(userDto);
-        log.info("SignUp Success");
+        log.info("[UserController] signup : SignUp Success");
         return ResponseEntity.ok("SignUp Success");
     }
 
     @PostMapping("/user/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         log.info("[UserController]login userid : {}", loginDto.getUserId());
+        // User
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getUserId(), loginDto.getPassword())
