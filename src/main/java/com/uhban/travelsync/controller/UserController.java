@@ -113,4 +113,15 @@ public class UserController {
         log.info("[UserController] changeUser userId : {}", userChangeDto.getUserId());
         return ResponseEntity.ok(userService.changeUser(userChangeDto));
     }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        if (!userId.equals(principalDetails.getUserId())) {
+            log.error("[UserController] deleteUser 인증된 사용자가 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        log.info("[UserController] deleteUser userId : {}", userId);
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("delete success");
+    }
 }

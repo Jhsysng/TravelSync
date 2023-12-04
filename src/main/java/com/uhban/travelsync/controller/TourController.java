@@ -83,5 +83,4 @@ public class TourController {
         tourService.deleteTour(userId, tourId);
         return ResponseEntity.ok("delete success");
     }
-
 }

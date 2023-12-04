@@ -102,6 +102,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    public void deleteUser(String userId) {
+        log.info("[UserService] deleteUser : {}", userId);
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> {
+                    log.error(USER_NOT_FOUND_LOG, userId);
+                    throw new IllegalArgumentException(USER_NOT_FOUND_EXCEPTION + userId);
+                });
+        userRepository.delete(user);
+    }
+
+
     public boolean userExists(String userId) {
         return userRepository.existsByUserId(userId);
     }
