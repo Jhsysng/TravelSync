@@ -11,5 +11,6 @@ public interface UserService {
     void saveUser(UserDto userDto);
     UserResponseDto changeUser(UserChangeDto userChangeDto);
     TokenResponseDto generateTokens (PrincipalDetails principalDetails);
+    void deleteUser(String userId);
     boolean userExists(String userId);
 }

@@ -30,6 +30,7 @@ public class LocationController {
 
     @GetMapping("/location/member/{groupId}")
     public ResponseEntity<List<LocationResponseDto>> getLocations(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails){
+        //해당 그룹이 off일 경우 에러 반환
         String userId = principalDetails.getUserId();
         log.info("[LocationController] getLocations groupId : {}", groupId);
         return ResponseEntity.ok(locationService.getLocations(userId, groupId));
@@ -42,5 +43,4 @@ public class LocationController {
         locationService.saveLocation(userId, locationUpdateDto);
         return ResponseEntity.ok().build();
     }
-
 }

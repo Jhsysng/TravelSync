@@ -73,9 +73,13 @@ public class GroupController {
     public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto groupCreateDto
             , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         log.info("[GroupController] saveGroup groupName : {}", groupCreateDto.getGroupName());
+        //사용자 인증 및 null 검증
         if(!groupCreateDto.getGuide().equals(principalDetails.getUserId())){
             log.error("[GroupController] saveGroup 인증된 사용자가 아닙니다.");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }else if(groupCreateDto.getGroupName().equals("")|| groupCreateDto.getStartDate()==null || groupCreateDto.getEndDate()==null){
+            log.error("[GroupController] saveGroup 그룹 생성 정보가 부족합니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         log.info("[GroupController] saveGroup group 생성 시작 {}", groupCreateDto.getGroupName());
         return ResponseEntity.ok(groupService.saveGroup(groupCreateDto));

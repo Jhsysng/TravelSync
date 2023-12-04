@@ -62,6 +62,12 @@ public class UserController {
         }else if(!userDto.getUserId().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
             log.error("[UserController] signup : 이메일 형식이 아닙니다.");
             return ResponseEntity.badRequest().body("Not Email Format");
+        }else if(!userDto.getPhone().matches("^\\d{11}$")){
+            log.error("[UserController] signup : 전화번호 형식이 아닙니다.");
+            return ResponseEntity.badRequest().body("Not Phone Format 01012345678");
+        }else if (!userDto.getName().matches("^[가-힣]{2,4}$")){
+            log.error("[UserController] signup : 이름 형식이 아닙니다.");
+            return ResponseEntity.badRequest().body("Not Name Format");
         }
         userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         if(userService.userExists(userDto.getUserId())) {
@@ -76,7 +82,13 @@ public class UserController {
     @PostMapping("/user/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         log.info("[UserController]login userid : {}", loginDto.getUserId());
-        // User
+        if (!loginDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,}$")) {
+            log.error("[UserController] login : 비밀번호가 조건에 맞지 않습니다. {}", loginDto.getPassword());
+            return ResponseEntity.badRequest().body("Not Password Format");
+        }else if(!loginDto.getUserId().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+            log.error("[UserController] login : 이메일 형식이 아닙니다.");
+            return ResponseEntity.badRequest().body("Not Email Format");
+        }
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getUserId(), loginDto.getPassword())
@@ -100,5 +112,16 @@ public class UserController {
         }
         log.info("[UserController] changeUser userId : {}", userChangeDto.getUserId());
         return ResponseEntity.ok(userService.changeUser(userChangeDto));
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        if (!userId.equals(principalDetails.getUserId())) {
+            log.error("[UserController] deleteUser 인증된 사용자가 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        log.info("[UserController] deleteUser userId : {}", userId);
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("delete success");
     }
 }
