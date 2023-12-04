@@ -1,28 +1,37 @@
-version : "3"
+version: "3"
 services:
   spring:
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     env_file:
-        - ./.env.dev
+      - ./.env.dev
+    environment:
+      - TZ=Asia/Seoul
     depends_on:
       - database
+
   database:
     image: mariadb:latest
     ports:
       - "3306:3306"
     env_file:
       - ./.env.db
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - mariadb:/var/lib/mariadb
+
   nginx:
     build: ./nginx
     ports:
       - "80:80"
+    environment:
+      - TZ=Asia/Seoul
     depends_on:
       - spring
+
 volumes:
   mariadb:
