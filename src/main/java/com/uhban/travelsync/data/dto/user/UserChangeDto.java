@@ -10,11 +10,13 @@ public class UserChangeDto {
     private String userId;
     private String name;
     private String phone;
+    private String password;
 
     @Builder
-    public UserChangeDto(String userId, String name, String phone) {
+    public UserChangeDto(String userId, String name, String phone, String password) {
         this.userId = userId;
         this.name = name;
         this.phone = phone;
+        this.password = password;
     }
 }

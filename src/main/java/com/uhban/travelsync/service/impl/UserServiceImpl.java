@@ -11,6 +11,7 @@ import com.uhban.travelsync.data.repository.UserRepository;
 import com.uhban.travelsync.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +22,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private static final String USER_NOT_FOUND_LOG = "해당 유저 : {}를 찾을 수 없습니다. : ";
     private static final String USER_NOT_FOUND_EXCEPTION = "해당 유저를 찾을 수 없습니다. : ";
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, TokenProvider tokenProvider) {
+    public UserServiceImpl(UserRepository userRepository, TokenProvider tokenProvider, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.tokenProvider = tokenProvider;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
     @Transactional
     public UserResponseDto getUser(String userId) {
@@ -63,15 +66,16 @@ public class UserServiceImpl implements UserService {
                     log.error(USER_NOT_FOUND_LOG, userChangeDto.getUserId());
                     throw new IllegalArgumentException(USER_NOT_FOUND_EXCEPTION + userChangeDto.getUserId());
                 });
-
+        //userchangeDto의 password가 null이 아닐경우 bcrypt로 암호화후 비밀번호 변경
         User changeUser = User.builder()
                 .userId(user.getUserId())
-                .password(user.getPassword())
-                .name(userChangeDto.getName())
-                .phone(userChangeDto.getPhone())
+                .password(userChangeDto.getPassword() != null ? bCryptPasswordEncoder.encode(userChangeDto.getPassword()) : user.getPassword())
+                .name(userChangeDto.getName() != null ? userChangeDto.getName() : user.getName())
+                .phone(userChangeDto.getPhone() != null ? userChangeDto.getPhone() : user.getPhone())
                 .latitude(user.getLatitude())
                 .longitude(user.getLongitude())
                 .build();
+
         userRepository.save(changeUser);
         log.info("[UserService] changeUser Success : {}", userChangeDto.getUserId());
         return UserResponseDto.builder()

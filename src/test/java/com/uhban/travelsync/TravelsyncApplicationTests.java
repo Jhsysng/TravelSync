@@ -12,5 +12,4 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootTest
 class TravelsyncApplicationTests {
-
 }

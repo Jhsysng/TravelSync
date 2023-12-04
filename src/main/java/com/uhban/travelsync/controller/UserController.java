@@ -106,11 +106,22 @@ public class UserController {
     @PutMapping("/user/change")
     public ResponseEntity<UserResponseDto> changeUser(@RequestBody UserChangeDto userChangeDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         String userId = principalDetails.getUserId();
+        //비밀번호가 null 이거나 ""경우가 아니면 정규식 체크
         if (!userId.equals(userChangeDto.getUserId())) {
             log.error("[UserController] changeUser 인증된 사용자가 아닙니다.");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }else if(!userChangeDto.getPhone().matches("^\\d{11}$")) {
+            log.error("[UserController] changeUser : 전화번호 형식이 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }else if (!userChangeDto.getName().matches("^[가-힣]{2,4}$")){
+            log.error("[UserController] changeUser : 이름 형식이 아닙니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }else if (userChangeDto.getPassword() != null && !userChangeDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,}$")) {
+            log.error("[UserController] changeUser : 비밀번호가 조건에 맞지 않습니다.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         log.info("[UserController] changeUser userId : {}", userChangeDto.getUserId());
+        //
         return ResponseEntity.ok(userService.changeUser(userChangeDto));
     }
 
