@@ -36,8 +36,16 @@ public class LocationController {
         return ResponseEntity.ok(locationService.getLocations(userId, groupId));
     }
 
+    @GetMapping("/location/checkmember/{groupId}")
+    public ResponseEntity<Integer> checkMember(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails){
+        String userId = principalDetails.getUserId();
+        log.info("[LocationController] checkMember groupId : {}", groupId);
+        return ResponseEntity.ok(locationService.countMembers(userId, groupId));
+    }
+
+
     @PutMapping("/location")
-    public ResponseEntity<?> updateLocation(@RequestBody LocationUpdateDto locationUpdateDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
+    public ResponseEntity<String> updateLocation(@RequestBody LocationUpdateDto locationUpdateDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         String userId = principalDetails.getUserId();
         log.info("[LocationController] updateLocation latitude : {}", userId);
         locationService.saveLocation(userId, locationUpdateDto);

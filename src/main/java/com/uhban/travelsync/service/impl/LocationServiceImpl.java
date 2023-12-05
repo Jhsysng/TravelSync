@@ -7,6 +7,7 @@ import com.uhban.travelsync.data.repository.GroupRepository;
 import com.uhban.travelsync.data.repository.GroupUserRepository;
 import com.uhban.travelsync.data.repository.UserRepository;
 import com.uhban.travelsync.service.LocationService;
+import com.uhban.travelsync.util.LocationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,7 @@ public class LocationServiceImpl implements LocationService {
         return userRepository.findByUserId(userId)
                 .map(user -> new LocationResponseDto(
                         user.getUserId(),
+                        user.getName(),
                         user.getLatitude(),
                         user.getLongitude()
                 ))
@@ -68,9 +70,31 @@ public class LocationServiceImpl implements LocationService {
         return groupUserRepository.findAllByGroup_GroupId(groupId).stream()
                 .map(group_user -> new LocationResponseDto(
                         group_user.getUser().getUserId(),
+                        group_user.getUser().getName(),
                         group_user.getUser().getLatitude(),
                         group_user.getUser().getLongitude()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    // 기존 코드 ...
+
+    @Transactional
+    public Integer countMembers(String userId, Long groupId){
+        log.info("[LocationService] countMembers groupId : {}", groupId);
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> {
+                    log.error("[LocationService] countMembers 그룹이 존재하지 않습니다.");
+                    throw new IllegalArgumentException("그룹이 존재하지 않습니다.");
+                });
+        if(group.getGuide().getUserId().equals(userId)){
+            log.error("[LocationService] countMembers 인증된 사용자가 그룹의 가이드가 아닙니다.");
+            throw new IllegalArgumentException("인증된 사용자가 그룹의 가이드가 아닙니다.");
+        }
+        //가이드 위경도 10m 이내의 멤버수
+        return groupUserRepository.findAllByGroup_GroupId(groupId).stream()
+                .filter(group_user -> LocationUtils.isNear(group.getGuide().getLatitude(), group.getGuide().getLongitude(), group_user.getUser().getLatitude(), group_user.getUser().getLongitude()))
+                .toList().size();
+
     }
 }
