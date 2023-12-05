@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LocationResponseDto {
     private String userId;
+    private String userName;
     private Double latitude;
     private Double longitude;
 
     @Builder
-    public LocationResponseDto(String userId, Double latitude, Double longitude) {
+    public LocationResponseDto(String userId, String userName, Double latitude, Double longitude) {
         this.userId = userId;
+        this.userName = userName;
         this.latitude = latitude;
         this.longitude = longitude;
     }

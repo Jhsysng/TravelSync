@@ -9,4 +9,5 @@ public interface LocationService {
     void saveLocation(String userId, LocationUpdateDto locationUpdateDto);
     LocationResponseDto getLocation(String userId, Long groupId);
     List<LocationResponseDto> getLocations(String userId, Long groupId);
+    Integer countMembers(String userId, Long groupId);
 }
