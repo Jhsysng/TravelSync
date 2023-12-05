@@ -37,7 +37,7 @@ public class LocationController {
     }
 
     @PutMapping("/location")
-    public ResponseEntity<?> updateLocation(@RequestBody LocationUpdateDto locationUpdateDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
+    public ResponseEntity<String> updateLocation(@RequestBody LocationUpdateDto locationUpdateDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
         String userId = principalDetails.getUserId();
         log.info("[LocationController] updateLocation latitude : {}", userId);
         locationService.saveLocation(userId, locationUpdateDto);

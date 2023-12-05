@@ -22,9 +22,17 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 public class UserController {
+
+    //Dependency Injection
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
+
+    //정규식
+    private static final String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,}$";
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    private static final String PHONE_REGEX = "^\\d{11}$";
+    private static final String NAME_REGEX = "^[가-힣]{2,4}$";
 
 
     public UserController(AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
@@ -56,16 +64,16 @@ public class UserController {
     public ResponseEntity<String> signup(@RequestBody UserDto userDto) {
         log.info("[UserController] signup userid : {}", userDto.getUserId());
         //비밀번호 10자이상 특수문자 포함 검증 및 이메일 형식 아이디 검증
-        if (!userDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,}$")) {
+        if (!userDto.getPassword().matches(PASSWORD_REGEX)) {
             log.error("[UserController] signup : 비밀번호가 조건에 맞지 않습니다.");
             return ResponseEntity.badRequest().body("Not Password Format");
-        }else if(!userDto.getUserId().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+        }else if(!userDto.getUserId().matches(EMAIL_REGEX)){
             log.error("[UserController] signup : 이메일 형식이 아닙니다.");
             return ResponseEntity.badRequest().body("Not Email Format");
-        }else if(!userDto.getPhone().matches("^\\d{11}$")){
+        }else if(!userDto.getPhone().matches(PHONE_REGEX)){
             log.error("[UserController] signup : 전화번호 형식이 아닙니다.");
             return ResponseEntity.badRequest().body("Not Phone Format 01012345678");
-        }else if (!userDto.getName().matches("^[가-힣]{2,4}$")){
+        }else if (!userDto.getName().matches(NAME_REGEX)){
             log.error("[UserController] signup : 이름 형식이 아닙니다.");
             return ResponseEntity.badRequest().body("Not Name Format");
         }
@@ -82,10 +90,10 @@ public class UserController {
     @PostMapping("/user/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         log.info("[UserController]login userid : {}", loginDto.getUserId());
-        if (!loginDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,}$")) {
+        if (!loginDto.getPassword().matches(PASSWORD_REGEX)) {
             log.error("[UserController] login : 비밀번호가 조건에 맞지 않습니다. {}", loginDto.getPassword());
             return ResponseEntity.badRequest().body("Not Password Format");
-        }else if(!loginDto.getUserId().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+        }else if(!loginDto.getUserId().matches(EMAIL_REGEX)){
             log.error("[UserController] login : 이메일 형식이 아닙니다.");
             return ResponseEntity.badRequest().body("Not Email Format");
         }
@@ -110,13 +118,13 @@ public class UserController {
         if (!userId.equals(userChangeDto.getUserId())) {
             log.error("[UserController] changeUser 인증된 사용자가 아닙니다.");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }else if(!userChangeDto.getPhone().matches("^\\d{11}$")) {
+        }else if(!userChangeDto.getPhone().matches(PHONE_REGEX)) {
             log.error("[UserController] changeUser : 전화번호 형식이 아닙니다.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }else if (!userChangeDto.getName().matches("^[가-힣]{2,4}$")){
+        }else if (!userChangeDto.getName().matches(NAME_REGEX)){
             log.error("[UserController] changeUser : 이름 형식이 아닙니다.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }else if (userChangeDto.getPassword() != null && !userChangeDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{10,}$")) {
+        }else if (userChangeDto.getPassword() != null && !userChangeDto.getPassword().matches(PASSWORD_REGEX)) {
             log.error("[UserController] changeUser : 비밀번호가 조건에 맞지 않습니다.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

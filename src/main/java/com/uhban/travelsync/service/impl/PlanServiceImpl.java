@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class PlanServiceImpl implements PlanService {
     private final PlanRepository planRepository;
     private final TourRepository tourRepository;
+    private static final String NOT_AUTHORIZED_USER = "인증된 사용자가 여행의 주인이 아닙니다.";
 
     public PlanServiceImpl(PlanRepository planRepository, TourRepository tourRepository) {
         this.planRepository = planRepository;
@@ -53,7 +54,7 @@ public class PlanServiceImpl implements PlanService {
             throw new IllegalArgumentException("Tour not found for ID: " + planCreateDto.getTourId());
         }else if(!optionalTour.get().getUser().getUserId().equals(userId)){
             log.error("[PlanService] savePlan 인증된 사용자가 여행의 주인이 아닙니다.");
-            throw new IllegalArgumentException("인증된 사용자가 여행의 주인이 아닙니다.");
+            throw new IllegalArgumentException(NOT_AUTHORIZED_USER);
         }
         Plan plan = planRepository.save(Plan.builder()
                 .tour(optionalTour.get())
@@ -83,7 +84,7 @@ public class PlanServiceImpl implements PlanService {
                 });
         if (!plan.getTour().getUser().getUserId().equals(userId)) {
             log.error("[PlanService] changePlan 인증된 사용자가 여행의 주인이 아닙니다.");
-            throw new IllegalArgumentException("인증된 사용자가 여행의 주인이 아닙니다.");
+            throw new IllegalArgumentException(NOT_AUTHORIZED_USER);
         }
 
         Plan changedPlan = planRepository.save(Plan.builder()
@@ -116,7 +117,7 @@ public class PlanServiceImpl implements PlanService {
             throw new IllegalArgumentException("Plan not found for ID: " + planId);
         }else if(!optionalPlan.get().getTour().getUser().getUserId().equals(userId)){
             log.error("[PlanService] deletePlan 인증된 사용자가 여행의 주인이 아닙니다.");
-            throw new IllegalArgumentException("인증된 사용자가 여행의 주인이 아닙니다.");
+            throw new IllegalArgumentException(NOT_AUTHORIZED_USER);
         }
         planRepository.deleteById(planId);
         log.info("[PlanService] deletePlan Success : {}", planId);
