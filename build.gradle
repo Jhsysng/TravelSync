@@ -69,7 +69,7 @@ subprojects {
 		properties {
 			property "sonar.host.url", "http://localhost:9000"
 
-			// 토큰을 직접 등록 해도 되지만 주입 받아서 사용한다.
+			// 토큰을 직접 등록 해도 되지만 주입 받아서 사용
 			property "sonar.login", "squ_df38785d34823958db37bb47ab58ffc79fe0f6c9"
 			property "sonar.sources", "src"
 			property "sonar.language", "java"

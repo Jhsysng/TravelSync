@@ -46,15 +46,18 @@ public class LocationServiceImpl implements LocationService {
             log.error("[LocationService] getLocation 인증된 사용자가 그룹에 속해있지 않습니다.");
             throw new IllegalArgumentException("인증된 사용자가 그룹에 속해있지 않습니다.");
         }
-
-        return userRepository.findByUserId(userId)
-                .map(user -> new LocationResponseDto(
-                        user.getUserId(),
-                        user.getName(),
-                        user.getLatitude(),
-                        user.getLongitude()
+        //가이드의 위치 반환
+        return groupRepository.findById(groupId)
+                .map(group -> new LocationResponseDto(
+                        group.getGuide().getUserId(),
+                        group.getGuide().getName(),
+                        group.getGuide().getLatitude(),
+                        group.getGuide().getLongitude()
                 ))
-                .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    log.error("[LocationService] getLocation 그룹이 존재하지 않습니다.");
+                    throw new IllegalArgumentException("그룹이 존재하지 않습니다.");
+                });
     }
 
 
