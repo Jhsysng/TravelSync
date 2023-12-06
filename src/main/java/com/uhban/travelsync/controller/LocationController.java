@@ -1,6 +1,7 @@
 package com.uhban.travelsync.controller;
 
 import com.uhban.travelsync.config.auth.PrincipalDetails;
+import com.uhban.travelsync.data.dto.location.LocationMemberResponseDto;
 import com.uhban.travelsync.data.dto.location.LocationResponseDto;
 import com.uhban.travelsync.data.dto.location.LocationUpdateDto;
 import com.uhban.travelsync.service.LocationService;
@@ -36,11 +37,18 @@ public class LocationController {
         return ResponseEntity.ok(locationService.getLocations(userId, groupId));
     }
 
-    @GetMapping("/location/checkmember/{groupId}")
+    @GetMapping("/location/countmember/{groupId}")
     public ResponseEntity<Integer> checkMember(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails){
         String userId = principalDetails.getUserId();
         log.info("[LocationController] checkMember groupId : {}", groupId);
         return ResponseEntity.ok(locationService.countMembers(userId, groupId));
+    }
+
+    @GetMapping("/location/checkmember/{groupId}")
+    public ResponseEntity<List<LocationMemberResponseDto>> getMembersCheck(@PathVariable Long groupId, @AuthenticationPrincipal PrincipalDetails principalDetails){
+        String userId = principalDetails.getUserId();
+        log.info("[LocationController] getMembersCheck groupId : {}", groupId);
+        return ResponseEntity.ok(locationService.getMembersCheck(userId, groupId));
     }
 
 
