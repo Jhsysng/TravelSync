@@ -1,5 +1,6 @@
 package com.uhban.travelsync.service;
 
+import com.uhban.travelsync.data.dto.location.LocationMemberResponseDto;
 import com.uhban.travelsync.data.dto.location.LocationResponseDto;
 import com.uhban.travelsync.data.dto.location.LocationUpdateDto;
 
@@ -10,4 +11,5 @@ public interface LocationService {
     LocationResponseDto getLocation(String userId, Long groupId);
     List<LocationResponseDto> getLocations(String userId, Long groupId);
     Integer countMembers(String userId, Long groupId);
+    List<LocationMemberResponseDto> getMembersCheck(String userId, Long groupId);
 }
