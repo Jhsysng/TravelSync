@@ -13,8 +13,9 @@ import java.util.Collections;
 
 @OpenAPIDefinition(
         info = @Info(title = "TravelSync API 명세서",
-                description = "0.0.3 controller 검증 추가, user delete 추가 0.0.4 user update 추가",
-                version = "v0.0.4"))
+                description = "user delete 추가 0.0.4 user update 추가," +
+                        "0.0.5 GroupResponseDto name 추가, groupInfo api추가",
+                version = "v0.0.5"))
 @Configuration
 public class SwaggerConfig {
     @Bean

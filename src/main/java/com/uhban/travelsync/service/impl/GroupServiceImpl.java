@@ -42,6 +42,23 @@ public class GroupServiceImpl implements GroupService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tourRepository = tourRepository;
     }
+
+    @Transactional
+    public GroupInfoDto getGroupInfo(Long groupId) {
+        Group group = groupRepository.findByGroupId(groupId)
+                .orElseThrow(() -> {
+                    log.error(GROUP_NOT_FOUND_LOG, groupId);
+                    throw new IllegalArgumentException(GROUP_NOT_FOUND_EXCEPTION + groupId);
+                });
+        return GroupInfoDto.builder()
+                .groupId(group.getGroupId())
+                .guide(group.getGuide().getName()) // 가이드의 이름
+                .groupName(group.getGroupName())
+                .startDate(group.getStartDate())
+                .endDate(group.getEndDate())
+                .tourCompany(group.getTourCompany())
+                .build();
+    }
     @Transactional
     public List<GroupInfoDto> getGroupByUserId(String userId) {
         Optional<List<Group>> optionalGroups = groupRepository.findByUserId(userId);
@@ -78,6 +95,7 @@ public class GroupServiceImpl implements GroupService {
         return GroupResponseDto.builder()
                 .groupId(group.getGroupId())
                 .guide(group.getGuide().getUserId())
+                .guideName(group.getGuide().getName())
                 .groupName(group.getGroupName())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
@@ -137,6 +155,7 @@ public class GroupServiceImpl implements GroupService {
         return GroupResponseDto.builder()
                 .groupId(group.getGroupId())
                 .guide(group.getGuide().getUserId())
+                .guideName(group.getGuide().getName())
                 .groupName(group.getGroupName())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())
@@ -176,7 +195,8 @@ public class GroupServiceImpl implements GroupService {
 
         return GroupResponseDto.builder()
                 .groupId(group.getGroupId())
-                .guide(group.getGuide().getUserId()) // Assuming getGuide() returns a User entity
+                .guide(group.getGuide().getUserId())
+                .guideName(group.getGuide().getName())
                 .groupName(group.getGroupName())
                 .startDate(group.getStartDate())
                 .endDate(group.getEndDate())

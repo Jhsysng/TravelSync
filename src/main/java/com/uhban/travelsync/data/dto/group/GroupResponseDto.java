@@ -12,6 +12,7 @@ import java.util.Date;
 public class GroupResponseDto {
     private Long groupId;
     private String guide;// guide의 userId
+    private String guideName;
     private String groupName;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date startDate;
@@ -23,10 +24,10 @@ public class GroupResponseDto {
     private Long tourId;
 
     @Builder
-    public GroupResponseDto(Long groupId, String guide, String groupName, Date startDate, Date endDate, String nation,
-                            String tourCompany, Boolean toggleLoc, Long tourId) {
+    public GroupResponseDto(Long groupId, String guide, String guideName, String groupName, Date startDate, Date endDate, String nation, String tourCompany, Boolean toggleLoc, Long tourId) {
         this.groupId = groupId;
         this.guide = guide;
+        this.guideName = guideName;
         this.groupName = groupName;
         this.startDate = startDate;
         this.endDate = endDate;
