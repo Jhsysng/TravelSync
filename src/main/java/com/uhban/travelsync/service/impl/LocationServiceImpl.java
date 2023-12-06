@@ -93,7 +93,7 @@ public class LocationServiceImpl implements LocationService {
                     log.error("[LocationService] countMembers 그룹이 존재하지 않습니다.");
                     throw new IllegalArgumentException(NOT_EXIST_GROUP);
                 });
-        if(group.getGuide().getUserId().equals(userId)){
+        if(!group.getGuide().getUserId().equals(userId)){
             log.error("[LocationService] countMembers 인증된 사용자가 그룹의 가이드가 아닙니다.");
             throw new IllegalArgumentException(NOT_GROUP_GUIDE);
         }
@@ -112,7 +112,7 @@ public class LocationServiceImpl implements LocationService {
                     log.error("[LocationService] getMembersCheck 그룹이 존재하지 않습니다.");
                     throw new IllegalArgumentException(NOT_EXIST_GROUP);
                 });
-        if(group.getGuide().getUserId().equals(userId)){
+        if(!group.getGuide().getUserId().equals(userId)){
             log.error("[LocationService] getMembersCheck 인증된 사용자가 그룹의 가이드가 아닙니다.");
             throw new IllegalArgumentException(NOT_GROUP_GUIDE);
         }
