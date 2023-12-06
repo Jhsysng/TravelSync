@@ -5,6 +5,7 @@ import com.uhban.travelsync.data.dto.group.*;
 import java.util.List;
 
 public interface GroupService {
+    GroupInfoDto getGroupInfo(Long groupId);
     List<GroupInfoDto> getGroupByUserId(String userId);
     List<GroupMemberDto> getGroupMembers(Long groupId);
     GroupResponseDto getGroup(Long groupId);

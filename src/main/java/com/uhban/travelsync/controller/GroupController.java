@@ -34,6 +34,19 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getGroupByUserId(userId));
     }
 
+    @GetMapping("/group/inviteinfo/{groupId}")
+    public ResponseEntity<GroupInfoDto> getGroupInviteInfo(@PathVariable final Long groupId){
+        log.info("[GroupController] getGroupInviteInfo groupId : {}", groupId);
+        try{
+            GroupInfoDto groupInfoDto = groupService.getGroupInfo(groupId);
+            log.info("[GroupController] getGroupInviteInfo Success : {}", groupId);
+            return ResponseEntity.ok(groupInfoDto);
+        }catch (EntityNotFoundException e){
+            log.error("[GroupController] getGroupInviteInfo 그룹이 존재하지 않습니다.");
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/group/detail/{groupId}")
     public ResponseEntity<GroupResponseDto> getGroupDetail(@PathVariable Long groupId
             , @AuthenticationPrincipal PrincipalDetails principalDetails) {
