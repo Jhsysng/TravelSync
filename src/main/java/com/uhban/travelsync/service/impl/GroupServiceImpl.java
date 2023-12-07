@@ -190,9 +190,12 @@ public class GroupServiceImpl implements GroupService {
                         throw new IllegalArgumentException("해당 여행을 찾을 수 없습니다. : " + groupDto.getTourId());
                     });
             group.setTour(tour);
+        }else{
+            group.setTour(null);
         }
-        groupRepository.save(group);
 
+        groupRepository.save(group);
+        //tourId가 null일경우 null을 반환
         return GroupResponseDto.builder()
                 .groupId(group.getGroupId())
                 .guide(group.getGuide().getUserId())
@@ -203,7 +206,9 @@ public class GroupServiceImpl implements GroupService {
                 .nation(group.getNation())
                 .tourCompany(group.getTourCompany())
                 .toggleLoc(group.getToggleLoc())
-                .tourId(group.getTour().getTourId())
+                .tourId(Optional.ofNullable(group.getTour())
+                        .map(Tour::getTourId)
+                        .orElse(null))
                 .build();
     }
 
