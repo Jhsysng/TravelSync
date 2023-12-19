@@ -38,8 +38,20 @@
 ### 패키지 여행시 동행자를 찾아주는 서비스
 > 여행계획을 관리해주고 공유하며 동행자를 찾아주는 서비스 TravelSync
 </br>
+> 
+> ### to frontend : [![Frontend Repository](https://img.shields.io/badge/TravelSync-Frontend-blue?style=for-the-badge&logo=github)](https://github.com/dailyrunner/TravelSync_client_new)
  ### 홈화면</br>
-![TravelSync_start](https://github.com/Jhsysng/TravelSync/assets/67987132/58e7dd1c-4e30-4f18-b234-bad96cc421f5)
+
+![TravelSyncStart](https://github.com/Jhsysng/TravelSync/assets/67987132/877b36dc-7f2c-4f8a-8b60-f9cd54c2b2d2)
 
 ### 메인화면</br>
  ![TravelSync Main](https://github.com/Jhsysng/TravelSync/assets/67987132/e0d463e8-383f-4bd3-bbe2-40e95e5b9b81)
+
+### 그룹 가입</br>
+ ![TravelSyncJoin](https://github.com/Jhsysng/TravelSync/assets/67987132/d538d7fd-0549-4333-99df-d9699a44a553)
+ 
+### 여행계획</br>
+![TravelSyncPlan](https://github.com/Jhsysng/TravelSync/assets/67987132/93044da3-14c9-4e81-883a-3c4227b5ed60)
+
+### 인원 점검</br>
+![TravelSyncLocationSearch](https://github.com/Jhsysng/TravelSync/assets/67987132/fd9ce110-139d-49c7-9eef-bf1397ef0993)
