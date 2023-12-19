@@ -278,5 +278,4 @@ public class GroupServiceImpl implements GroupService {
         groupUserRepository.delete(groupUser);
         log.info("[GroupServiceImpl] leaveGroup Success : {} {}", userId, groupId);
     }
-
 }
