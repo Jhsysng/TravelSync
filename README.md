@@ -36,12 +36,11 @@
 ----
 # TravelSync
 ### 패키지 여행시 동행자를 찾아주는 서비스
-> 여행계획을 관리해주고 공유하며 동행자를 찾아주는 서비스 TravelSync
-</br>
-> 
-> ### to frontend : [![Frontend Repository](https://img.shields.io/badge/TravelSync-Frontend-blue?style=for-the-badge&logo=github)](https://github.com/dailyrunner/TravelSync_client_new)
- ### 홈화면</br>
-
+> 여행계획을 관리해주고 공유하며 동행자를 찾아주는 서비스 TravelSync</br>
+## To FrontEnd
+### [![Frontend Repository](https://img.shields.io/badge/TravelSync-Frontend-blue?style=for-the-badge&logo=github)](https://github.com/dailyrunner/TravelSync_client_new)
+### 📌 프로젝트 화면 예시
+### 홈화면</br>
 ![TravelSyncStart](https://github.com/Jhsysng/TravelSync/assets/67987132/877b36dc-7f2c-4f8a-8b60-f9cd54c2b2d2)
 
 ### 메인화면</br>
