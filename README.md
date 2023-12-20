@@ -17,12 +17,14 @@
 ![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=MariaDB&logoColor=white)
 
 ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSONWebTokens&logoColor=white)
 ![JPA](https://img.shields.io/badge/JPA-02569B?style=for-the-badge&logo=JPA&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white)
 ### Infra
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white)
 ![Nginx](https://img.shields.io/badge/Nginx-269539?style=for-the-badge&logo=NGINX&logoColor=white)
 ![GCP](https://img.shields.io/badge/GCP-4285F4?style=for-the-badge&logo=GoogleCloud&logoColor=white)
+![sonarqube](https://img.shields.io/badge/SonarQube-4E9BCD?style=for-the-badge&logo=SonarQube&logoColor=white)
 
 ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=AmazonAWS&logoColor=white)
 ![GithubActions](https://img.shields.io/badge/GithubActions-2088FF?style=for-the-badge&logo=GithubActions&logoColor=white)
@@ -33,6 +35,70 @@
 ----
 ## API
 ![TravelSyncAPI](https://github.com/Jhsysng/TravelSync/assets/67987132/4f9707a2-ad0c-4a79-b43e-a64309001258)
+
+## 실행
+### 1. Create YML
+```bash
+sudo vim ./src/main/resources/application.yml
+```
+
+```yml
+spring:
+  config:
+    import:
+      - app.yml
+    datasource:
+        url: jdbc:mariadb://localhost:3306/travelsync
+        driver-class-name: org.mariadb.jdbc.Driver
+        username: { your username }
+        password: { your password }
+
+    jpa:
+        hibernate:
+          ddl-auto: update
+        properties:
+          hibernate:
+              format_sql: true
+```
+```bash
+sudo vim ./src/main/resources/app.yml
+```
+```yml
+app:
+  jwt:
+    secret: { your secret key }
+    accessToken:
+      expiration: 3600
+    refreshToken:
+      expiration: 86400
+```
+### 2. Create ENV File
+
+.env.dev
+```bash
+sudo vim ./.env.dev
+```
+```env
+SPRING_DATASOURCE_URL=jdbc:mariadb://database:3306/travelsync
+SPRING_DATASOURCE_USERNAME= { your username }
+SPRING_DATASOURCE_PASSWORD= { your password }
+```
+.env.db
+```bash
+sudo vim ./.env.db
+```
+```env
+MYSQL_HOST=localhost database
+MYSQL_PORT=3306
+MYSQL_ROOT_PASSWORD= { your password }
+MYSQL_USER= { your username }
+MYSQL_PASSWORD= { your password }
+MYSQL_DATABASE=travelsync
+```
+### 3. Docker-compose
+```bash
+sudo docker-compose up -d
+```
 ----
 # TravelSync
 ### 패키지 여행시 동행자를 찾아주는 서비스
